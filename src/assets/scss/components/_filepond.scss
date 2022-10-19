@@ -1,0 +1,28 @@
+.filepond-custom {
+  position: absolute;
+  right: 0;
+  bottom: 65px;
+  width: 200px;
+  max-height: 50vh;
+  overflow: auto;
+  .filepond--drop-label {
+    display: none;
+  }
+}
+
+// right preview image
+.filepond--image-canvas-wrapper {
+  transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateZ(0rad) !important;
+  width: 100% !important;
+  height: 100% !important;
+
+  .filepond--image-bitmap {
+    width: 100% !important;
+    height: 100% !important;
+
+    canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
+}

@@ -1,0 +1,11 @@
+.ticket-sidebar-footer {
+  position: sticky;
+  bottom: 0;
+  background-color: aliceblue;
+  padding: 1px 0;
+  background-color: #fff;
+  // & > * {
+  //   animation: moveInBottom 0.5s ease-out 0.75s;
+  //   animation-fill-mode: backwards;
+  // }
+}

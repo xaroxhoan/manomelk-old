@@ -1,0 +1,90 @@
+// Skeleton Base Styles
+.skeleton {
+  background: #ddd;
+  margin: 5px 0;
+  border-radius: 3px;
+
+  &.sk-text {
+    width: 100%;
+    height: 10px;
+  }
+
+  &.sk-title {
+    width: 50%;
+    height: 15px;
+    margin-bottom: 15px;
+  }
+
+  &.sk-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+
+  &.sk-thumbnail {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// Skeleton Wrapper
+.skeleton-wrapper {
+  position: relative;
+  margin: 5px 10px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  overflow: hidden;
+
+  &.light {
+    background: #f2f2f2;
+  }
+
+  &.dark {
+    background: #161d31;
+    .skeleton {
+      background: #3b4253;
+    }
+    .shimmer {
+      background: rgba(255, 255, 255, 0.02);
+      box-shadow: 0 0 20px 20px rgba(255, 255, 255, 0.02);
+    }
+  }
+}
+
+// Ticket
+.skeleton-ticket-sidebar {
+  display: grid;
+  grid-template-columns: 1fr 5fr;
+  gap: 15px;
+  align-items: center;
+}
+
+// Animation Effects
+.shimmer-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  animation: loading 1s infinite;
+
+  .shimmer {
+    width: 50%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: skewX(-20deg);
+    box-shadow: 0 0 20px 20px rgba(255, 255, 255, 0.05);
+  }
+}
+
+@keyframes loading {
+  0% {
+    transform: translateX(-150%);
+  }
+  50% {
+    transform: translateX(-60%);
+  }
+  100% {
+    transform: translateX(150%);
+  }
+}

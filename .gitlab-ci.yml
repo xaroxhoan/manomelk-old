@@ -1,0 +1,14 @@
+stages:
+  - deploy
+   
+deploy:
+  stage: deploy
+  tags:
+    - manomelk
+  environment:
+    name: deploying
+  script:
+    - cd ~
+    - ./admin-manomelk.sh
+  only:
+    - main

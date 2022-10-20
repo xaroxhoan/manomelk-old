@@ -71,6 +71,9 @@
     -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236e6b7b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-chevron-right'%3E%3Cpolyline points='9 18 15 12 9 6'%3E%3C/polyline%3E%3C/svg%3E");
     mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236e6b7b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-chevron-right'%3E%3Cpolyline points='9 18 15 12 9 6'%3E%3C/polyline%3E%3C/svg%3E");
 }
+[dir=rtl] .rdt_Pagination > span {
+    direction: ltr !important; padding-top: 5px;
+}
 .toast-title {
     font-family: "dana";
 }
@@ -335,6 +338,7 @@ a.navbar-brand {
     background-color: #78777E; margin-right: 6px; margin-left: 2px;
 }
 .text-status-active::before,
+.text-status-success::before,
 .text-status-visible::before,
 .text-status-paid::before,
 .text-status-ready::before,
@@ -342,12 +346,14 @@ a.navbar-brand {
     background-color: #00BA99;
 }
 .text-status-ended::before,
+.text-status-fail::before,
 .text-status-expired::before,
 .text-status-hide::before,
 .text-status-refunded::before,
 .text-status-unpaid::before {
     background-color: #E3605A;
 }
+.text-status-pending::before
 .text-status-hold::before {
     background-color: #f38d68;
 }

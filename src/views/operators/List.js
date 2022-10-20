@@ -1,11 +1,11 @@
 import { Card, CardHeader, CardBody, CardTitle, Button, Row, Col, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap'
-import UsersDataTable from '@appcomponents/users/UsersDataTable'
+import UsersDataTable from '@appcomponents/operators/OperatorsDataTable'
 import { useState, lazy, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import useService from '../../hooks/service'
 
-const UsersList = () => {
-  const {users} = useService()
+const OperatorsList = () => {
+  const {operators} = useService()
   const query = useLocation()
   const [active, setActive] = useState('all')
   const [Component, setComponent] = useState(null)
@@ -48,16 +48,16 @@ const UsersList = () => {
 
   useEffect(() => {
     if (componentInfo.type === 'update') {
-      setComponent(lazy(() => import('@appcomponents/users/UsersUpdate')))
+      setComponent(lazy(() => import('@appcomponents/operators/OperatorsUpdate')))
     }
     if (componentInfo.type === 'create') {
-      setComponent(lazy(() => import('@appcomponents/users/UsersCreate')))
+      setComponent(lazy(() => import('@appcomponents/operators/OperatorsCreate')))
     }
   }, [componentInfo.type])
 
   const onChangePublishSwitch = async (row, pagination, callbackFetchData) => {
     try {
-       await users.updateStatus(row._id, {
+       await operators.updateStatus(row._id, {
          status: row.status === 'approved' ? 'rejected' : 'approved'
        })
        await callbackFetchData(pagination.page)
@@ -71,7 +71,7 @@ const UsersList = () => {
           <Card>
             <CardHeader>
               <CardTitle className='has-action'>
-                <span>آگهی دهنده ها</span>
+                <span>اپراتورها</span>
                 <div className='actions'>
                   <Button block color='relief-primary' onClick={ onClickNewUser }>اپراتور جدید</Button>
                 </div>
@@ -80,16 +80,16 @@ const UsersList = () => {
             <CardBody>
               <Nav className='custom-tab mb-0' tabs>
                 <NavItem>
-                  <NavLink active={active === 'all'} to={'/users'} onClick={() => { toggle('all') }}>همه</NavLink>
+                  <NavLink active={active === 'all'} to={'/operators'} onClick={() => { toggle('all') }}>همه</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink active={active === 'pending'} to={'/users?tab=pending'} onClick={() => { toggle('pending') }}>در انتظار تایید</NavLink>
+                  <NavLink active={active === 'pending'} to={'/operators?tab=pending'} onClick={() => { toggle('pending') }}>در انتظار تایید</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink active={active === 'active'} to={'/users?tab=active'} onClick={() => { toggle('active') }}>تایید شده ها</NavLink>
+                  <NavLink active={active === 'active'} to={'/operators?tab=active'} onClick={() => { toggle('active') }}>تایید شده ها</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink active={active === 'banned'} to={'/users?tab=banned'} onClick={() => { toggle('banned') }}>مسدود شده ها</NavLink>
+                  <NavLink active={active === 'banned'} to={'/operators?tab=banned'} onClick={() => { toggle('banned') }}>مسدود شده ها</NavLink>
                 </NavItem>
               </Nav>
               <TabContent className='tab-content-datatable py-50' activeTab={active.toString()}>
@@ -128,4 +128,4 @@ const UsersList = () => {
   )
 }
 
-export default UsersList
+export default OperatorsList

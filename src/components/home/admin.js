@@ -1,11 +1,11 @@
 import StatsVertical from '@components/widgets/stats/StatsVertical'
 import StatsWithLineChart from '@components/widgets/stats/StatsWithLineChart'
 import { useEffect, useState } from 'react'
-import { Grid, Layers, Monitor, ShoppingBag, Users } from 'react-feather'
+import { Grid, Layers, Monitor, Users } from 'react-feather'
 import { Card, CardBody, CardHeader, CardTitle, Col, Row } from 'reactstrap'
 import { Line } from 'react-chartjs-2'
-import OrdersDataTable from '@appcomponents/orders/OrdersDataTable'
 import useService from '../../hooks/service'
+import TransactionsDataTable from '../transactions/TransactionsDataTable'
 
 const AdminHome = () => {
     const {dashboard} = useService()
@@ -114,7 +114,7 @@ const AdminHome = () => {
                                         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
                                         datasets: [
                                             {
-                                            label: 'Sales by month',
+                                            label: 'فروش ماهانه',
                                             data: ['January', 'February', 'March', 'April', 'May', 'June', 'July'].map(() => 0),
                                             borderColor: '#7367f0',
                                             backgroundColor: 'rgba(115, 103, 240, 0.12)'
@@ -188,7 +188,7 @@ const AdminHome = () => {
                             <CardTitle></CardTitle>
                         </CardHeader>
                         <CardBody className='pt-26'>
-                            <OrdersDataTable type="pending" />
+                            <TransactionsDataTable type="pending" />
                         </CardBody>
                     </Card>
                 </Col>

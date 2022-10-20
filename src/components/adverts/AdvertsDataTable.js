@@ -7,8 +7,8 @@ import CustomLoader from '../CustomLoader'
 import DataTableSearch from '../DataTableSearch'
 import NoDataComponent from '../NoDataComponent'
 
-const UsersDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
-  const {users} = useService()
+const AdvertsDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
+  const {adverts} = useService()
   const [pending, setPending] = useState(true)
   const [items, setItems] = useState([])
   const [selectedItem, setSelectedItem] = useState(null)
@@ -22,7 +22,7 @@ const UsersDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
   const fetchData = async (page) => {
     try {
       setPending(true)
-      const response = await users.fetchList({
+      const response = await adverts.fetchList({
         status: type,
         page,
         perPage: pagination.perPage,
@@ -55,7 +55,7 @@ const UsersDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
 
   const onDelete = async () => {
     try {
-      await users.delete(selectedItem._id)
+      await adverts.delete(selectedItem._id)
       setSelectedItem(null)
       await fetchData(pagination.page)
     } catch (e) {}
@@ -76,13 +76,20 @@ const UsersDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
 
   const columns = [
     {
-      name: 'نام و نام خانوادگی',
-      selector: row => <a href={'#'} onClick={ e => onClickEdit(e, row) }>{row.name} {row.family}</a>,
+      name: 'عنوان',
+      selector: row => <a href={'#'} onClick={ e => onClickEdit(e, row) }>{row.title}</a>,
       sortable: true
     },
     {
-      name: 'تلفن همراه',
-      selector: row => row.mobile,
+      name: 'کاربر',
+      selector: row => `${row.user.name} ${row.user.family}`,
+      width: '120px',
+      sortable: true
+    },
+    {
+      name: 'دسته',
+      selector: row => row.category.title,
+      width: '120px',
       sortable: true
     },
     {
@@ -148,4 +155,4 @@ const UsersDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
   )
 }
 
-export default UsersDataTable
+export default AdvertsDataTable

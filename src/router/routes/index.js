@@ -19,6 +19,41 @@ const Routes = [
     ]
   },
   {
+    path: "/adverts",
+    component: lazy(() => import("../../views/adverts/List")),
+    permissions: [
+      { action: Permissions.Adverts.Read.action, resource: Permissions.Adverts.Read.resource }
+    ]
+  },
+  {
+    path: "/operators",
+    component: lazy(() => import("../../views/operators/List")),
+    permissions: [
+      { action: Permissions.Operators.Read.action, resource: Permissions.Operators.Read.resource }
+    ]
+  },
+  {
+    path: "/users",
+    component: lazy(() => import("../../views/users/List")),
+    permissions: [
+      { action: Permissions.Users.Read.action, resource: Permissions.Users.Read.resource }
+    ]
+  },
+  {
+    path: "/advisors",
+    component: lazy(() => import("../../views/advisors/List")),
+    permissions: [
+      { action: Permissions.Advisors.Read.action, resource: Permissions.Advisors.Read.resource }
+    ]
+  },
+  {
+    path: "/creators",
+    component: lazy(() => import("../../views/creators/List")),
+    permissions: [
+      { action: Permissions.Creators.Read.action, resource: Permissions.Creators.Read.resource }
+    ]
+  },
+  {
     path: "/articles/categories",
     component: lazy(() => import("../../views/blog/Categories")),
     permissions: [
@@ -90,20 +125,6 @@ const Routes = [
     component: lazy(() => import("../../views/undermenu/SocialMedia")),
     permissions: [
       { action: Permissions.SocialMedia.Read.action, resource: Permissions.SocialMedia.Read.resource }
-    ]
-  },
-  {
-    path: "/users",
-    component: lazy(() => import("../../views/users/List")),
-    permissions: [
-      { action: Permissions.Users.Read.action, resource: Permissions.Users.Read.resource }
-    ]
-  },
-  {
-    path: "/customers",
-    component: lazy(() => import("../../views/users/Customers")),
-    permissions: [
-      { action: Permissions.Customers.Read.action, resource: Permissions.Customers.Read.resource }
     ]
   },
   {

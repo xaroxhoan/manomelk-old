@@ -1,11 +1,11 @@
 import { Card, CardHeader, CardBody, CardTitle, Button, Row, Col, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap'
-import UsersDataTable from '@appcomponents/users/UsersDataTable'
+import AdvertsDataTable from '@appcomponents/adverts/AdvertsDataTable'
 import { useState, lazy, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import useService from '../../hooks/service'
 
-const UsersList = () => {
-  const {users} = useService()
+const AdvertsList = () => {
+  const {adverts} = useService()
   const query = useLocation()
   const [active, setActive] = useState('all')
   const [Component, setComponent] = useState(null)
@@ -19,7 +19,7 @@ const UsersList = () => {
     const params = new URLSearchParams(query.search)
     let tab = params.get('tab')
     tab = tab === null || tab === '' ? 'all' : tab
-    tab = ['all', 'pending', 'active', 'banned'].indexOf(tab) < 0 ? 'all' : tab
+    tab = ['all', 'pending', 'active', 'rejected'].indexOf(tab) < 0 ? 'all' : tab
     setActive(tab)
   }, [query.search])
 
@@ -48,17 +48,17 @@ const UsersList = () => {
 
   useEffect(() => {
     if (componentInfo.type === 'update') {
-      setComponent(lazy(() => import('@appcomponents/users/UsersUpdate')))
+      setComponent(lazy(() => import('@appcomponents/adverts/AdvertsUpdate')))
     }
     if (componentInfo.type === 'create') {
-      setComponent(lazy(() => import('@appcomponents/users/UsersCreate')))
+      setComponent(lazy(() => import('@appcomponents/adverts/AdvertsCreate')))
     }
   }, [componentInfo.type])
 
   const onChangePublishSwitch = async (row, pagination, callbackFetchData) => {
     try {
-       await users.updateStatus(row._id, {
-         status: row.status === 'approved' ? 'rejected' : 'approved'
+       await adverts.updateStatus(row._id, {
+         status: row.status === 'active' ? 'rejected' : 'active'
        })
        await callbackFetchData(pagination.page)
      } catch (e) {}
@@ -71,39 +71,39 @@ const UsersList = () => {
           <Card>
             <CardHeader>
               <CardTitle className='has-action'>
-                <span>آگهی دهنده ها</span>
+                <span>آگهی ها</span>
                 <div className='actions'>
-                  <Button block color='relief-primary' onClick={ onClickNewUser }>اپراتور جدید</Button>
+                  <Button block color='relief-primary' onClick={ onClickNewUser }>آگهی جدید</Button>
                 </div>
               </CardTitle>
             </CardHeader>
             <CardBody>
               <Nav className='custom-tab mb-0' tabs>
                 <NavItem>
-                  <NavLink active={active === 'all'} to={'/users'} onClick={() => { toggle('all') }}>همه</NavLink>
+                  <NavLink active={active === 'all'} to={'/adverts'} onClick={() => { toggle('all') }}>همه</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink active={active === 'pending'} to={'/users?tab=pending'} onClick={() => { toggle('pending') }}>در انتظار تایید</NavLink>
+                  <NavLink active={active === 'pending'} to={'/adverts?tab=pending'} onClick={() => { toggle('pending') }}>در انتظار تایید</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink active={active === 'active'} to={'/users?tab=active'} onClick={() => { toggle('active') }}>تایید شده ها</NavLink>
+                  <NavLink active={active === 'active'} to={'/adverts?tab=active'} onClick={() => { toggle('active') }}>تایید شده ها</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink active={active === 'banned'} to={'/users?tab=banned'} onClick={() => { toggle('banned') }}>مسدود شده ها</NavLink>
+                  <NavLink active={active === 'rejected'} to={'/adverts?tab=rejected'} onClick={() => { toggle('rejected') }}>رد شده ها</NavLink>
                 </NavItem>
               </Nav>
               <TabContent className='tab-content-datatable py-50' activeTab={active.toString()}>
                 { active === 'all' && <TabPane tabId='all'>
-                  <UsersDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'all'} onClickUpdate={onClickUpdate} />
+                  <AdvertsDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'all'} onClickUpdate={onClickUpdate} />
                 </TabPane> }
                 { active === 'pending' && <TabPane tabId='pending'>
-                  <UsersDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'pending'} onClickUpdate={onClickUpdate} />
+                  <AdvertsDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'pending'} onClickUpdate={onClickUpdate} />
                 </TabPane> }
                 { active === 'active' && <TabPane tabId='active'>
-                  <UsersDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'active'} onClickUpdate={onClickUpdate} />
+                  <AdvertsDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'active'} onClickUpdate={onClickUpdate} />
                 </TabPane> }
-                { active === 'banned' && <TabPane tabId='banned'>
-                  <UsersDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'banned'} onClickUpdate={onClickUpdate} />
+                { active === 'rejected' && <TabPane tabId='rejected'>
+                  <AdvertsDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'rejected'} onClickUpdate={onClickUpdate} />
                 </TabPane> }
               </TabContent>
             </CardBody>
@@ -128,4 +128,4 @@ const UsersList = () => {
   )
 }
 
-export default UsersList
+export default AdvertsList

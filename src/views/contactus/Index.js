@@ -7,7 +7,7 @@ const ContactUsIndex = () => {
       <Card>
         <CardHeader>
           <CardTitle className='has-action'>
-            <span>Contact Us</span>
+            <span>ارتباط با ما</span>
           </CardTitle>
         </CardHeader>
         <CardBody>

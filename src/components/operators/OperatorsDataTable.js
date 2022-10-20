@@ -7,8 +7,8 @@ import CustomLoader from '../CustomLoader'
 import DataTableSearch from '../DataTableSearch'
 import NoDataComponent from '../NoDataComponent'
 
-const UsersDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
-  const {users} = useService()
+const OperatorsDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
+  const {operators} = useService()
   const [pending, setPending] = useState(true)
   const [items, setItems] = useState([])
   const [selectedItem, setSelectedItem] = useState(null)
@@ -22,7 +22,7 @@ const UsersDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
   const fetchData = async (page) => {
     try {
       setPending(true)
-      const response = await users.fetchList({
+      const response = await operators.fetchList({
         status: type,
         page,
         perPage: pagination.perPage,
@@ -55,7 +55,7 @@ const UsersDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
 
   const onDelete = async () => {
     try {
-      await users.delete(selectedItem._id)
+      await operators.delete(selectedItem._id)
       setSelectedItem(null)
       await fetchData(pagination.page)
     } catch (e) {}
@@ -78,11 +78,6 @@ const UsersDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
     {
       name: 'نام و نام خانوادگی',
       selector: row => <a href={'#'} onClick={ e => onClickEdit(e, row) }>{row.name} {row.family}</a>,
-      sortable: true
-    },
-    {
-      name: 'تلفن همراه',
-      selector: row => row.mobile,
       sortable: true
     },
     {
@@ -148,4 +143,4 @@ const UsersDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
   )
 }
 
-export default UsersDataTable
+export default OperatorsDataTable

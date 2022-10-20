@@ -5,6 +5,7 @@ import { UncontrolledDropdown, DropdownMenu, DropdownItem, DropdownToggle, Modal
 import useService from '../../hooks/service'
 import CustomLoader from '../CustomLoader'
 import DataTableSearch from '../DataTableSearch'
+import NoDataComponent from '../NoDataComponent'
 
 const FaqTopicDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
   const {faqtopic} = useService()
@@ -17,11 +18,6 @@ const FaqTopicDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
     totalRows: 0,
     perPage: 8
   })
-  const [filters, _] = useState([
-    { title: 'title', operators: ['equals', 'not equal', 'contains'] },
-    { title: 'alias', operators: ['equals', 'not equal', 'contains'] }
-  ])
-  const [advancedSearch, setAdvancedSearch] = useState([])
 
   const fetchData = async (page) => {
     try {
@@ -32,7 +28,7 @@ const FaqTopicDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
         perPage: pagination.perPage,
         searchText
       })
-      const result = response.data.data
+      const result = response.data.result
       setItems(result.items)
       setPagination({ 
         ...pagination,
@@ -74,27 +70,18 @@ const FaqTopicDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
     setSearchText(value)
   }
 
-  const onAdvancedSearch = values => {
-    setAdvancedSearch(values)
-  }
-
   const onChangeSwitch = row => {
     onChangePublishSwitch(row, pagination, fetchData)
   }
 
   const columns = [
     {
-      name: 'Title',
+      name: 'عنوان',
       selector: row => <a href={'#'} onClick={ e => onClickEdit(e, row) }>{row.title}</a>,
       sortable: true
     },
     {
-      name: 'Alias',
-      selector: row => row.alias,
-      sortable: true
-    },
-    {
-      name: 'Status',
+      name: 'وضعیت',
       width: '120px',
       selector: row => <div className='d-flex flex-column'>
         <div className='form-switch form-check-primary'>
@@ -125,10 +112,7 @@ const FaqTopicDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
     <Row>
       <DataTableSearch 
         defaultSearchText={searchText}
-        filters={filters}
-        defaultFilters={advancedSearch}
         onSearch={onSearch} 
-        onAdvancedSearch={onAdvancedSearch}
       />
       <Col lg={12} className="sc-datatable-wrapper">
         <DataTable
@@ -144,6 +128,7 @@ const FaqTopicDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
           selectableRows
           progressPending={pending}
           progressComponent={<CustomLoader columns={columns} />}
+          noDataComponent={<NoDataComponent columns={columns} />}
         />
         <Modal isOpen={selectedItem !== null} toggle={() => setSelectedItem(null)} className='modal-dialog-centered'>
           <ModalHeader toggle={() => setSelectedItem(null)}>Delete</ModalHeader>

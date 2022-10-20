@@ -1,11 +1,11 @@
 import { Card, CardHeader, CardBody, CardTitle, Button, Row, Col, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap'
-import CustomersDataTable from '@appcomponents/customers/CustomersDataTable'
+import CreatorsDataTable from '@appcomponents/creators/CreatorsDataTable'
 import { useState, lazy, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import useService from '../../hooks/service'
 
-const CustomersList = () => {
-  const {users} = useService()
+const CreatorsList = () => {
+  const {creators} = useService()
   const query = useLocation()
   const [active, setActive] = useState('all')
   const [Component, setComponent] = useState(null)
@@ -19,7 +19,7 @@ const CustomersList = () => {
     const params = new URLSearchParams(query.search)
     let tab = params.get('tab')
     tab = tab === null || tab === '' ? 'all' : tab
-    tab = ['all', 'approved', 'rejected'].indexOf(tab) < 0 ? 'all' : tab
+    tab = ['all', 'pending', 'active', 'banned'].indexOf(tab) < 0 ? 'all' : tab
     setActive(tab)
   }, [query.search])
 
@@ -29,16 +29,12 @@ const CustomersList = () => {
     }
   }
 
-  const onClickNewUser = _ => {
+  const onClickNewCreator = _ => {
     setComponentInfo({ ...componentInfo, type: 'create' })
   }
 
   const onClickUpdate = row => {
     setComponentInfo({ ...componentInfo, type: 'update', data: row })
-  }
-
-  const onClickShowCartItems = row => {
-    setComponentInfo({ ...componentInfo, type: 'showcart', data: row })
   }
 
   const onSaved = _ => {
@@ -52,19 +48,16 @@ const CustomersList = () => {
 
   useEffect(() => {
     if (componentInfo.type === 'update') {
-      setComponent(lazy(() => import('@appcomponents/customers/CustomersUpdate')))
+      setComponent(lazy(() => import('@appcomponents/creators/CreatorsUpdate')))
     }
     if (componentInfo.type === 'create') {
-      setComponent(lazy(() => import('@appcomponents/customers/CustomersCreate')))
-    }
-    if (componentInfo.type === 'showcart') {
-      setComponent(lazy(() => import('@appcomponents/customers/CustomersCartDataTable')))
+      setComponent(lazy(() => import('@appcomponents/creators/CreatorsCreate')))
     }
   }, [componentInfo.type])
 
   const onChangePublishSwitch = async (row, pagination, callbackFetchData) => {
     try {
-       await users.updateStatus(row._id, {
+       await creators.updateStatus(row._id, {
          status: row.status === 'approved' ? 'rejected' : 'approved'
        })
        await callbackFetchData(pagination.page)
@@ -78,33 +71,39 @@ const CustomersList = () => {
           <Card>
             <CardHeader>
               <CardTitle className='has-action'>
-                <span>Customers</span>
+                <span>سازنده ها</span>
                 <div className='actions'>
-                  <Button block color='relief-primary' onClick={ onClickNewUser }>Add New</Button>
+                  <Button block color='relief-primary' onClick={ onClickNewCreator }>اپراتور جدید</Button>
                 </div>
               </CardTitle>
             </CardHeader>
             <CardBody>
               <Nav className='custom-tab mb-0' tabs>
                 <NavItem>
-                  <NavLink active={active === 'all'} to={'/customers'} onClick={() => { toggle('all') }}>all</NavLink>
+                  <NavLink active={active === 'all'} to={'/creators'} onClick={() => { toggle('all') }}>همه</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink active={active === 'approved'} to={'/customers?tab=approved'} onClick={() => { toggle('approved') }}>approved</NavLink>
+                  <NavLink active={active === 'pending'} to={'/creators?tab=pending'} onClick={() => { toggle('pending') }}>در انتظار تایید</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink active={active === 'rejected'} to={'/customers?tab=rejected'} onClick={() => { toggle('rejected') }}>rejected</NavLink>
+                  <NavLink active={active === 'active'} to={'/creators?tab=active'} onClick={() => { toggle('active') }}>تایید شده ها</NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink active={active === 'banned'} to={'/creators?tab=banned'} onClick={() => { toggle('banned') }}>مسدود شده ها</NavLink>
                 </NavItem>
               </Nav>
               <TabContent className='tab-content-datatable py-50' activeTab={active.toString()}>
                 { active === 'all' && <TabPane tabId='all'>
-                  <CustomersDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'all'} onClickUpdate={onClickUpdate} onClickShowCartItems={onClickShowCartItems} />
+                  <CreatorsDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'all'} onClickUpdate={onClickUpdate} />
                 </TabPane> }
-                { active === 'approved' && <TabPane tabId='approved'>
-                  <CustomersDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'approved'} onClickUpdate={onClickUpdate} onClickShowCartItems={onClickShowCartItems} />
+                { active === 'pending' && <TabPane tabId='pending'>
+                  <CreatorsDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'pending'} onClickUpdate={onClickUpdate} />
                 </TabPane> }
-                { active === 'rejected' && <TabPane tabId='rejected'>
-                  <CustomersDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'rejected'} onClickUpdate={onClickUpdate} onClickShowCartItems={onClickShowCartItems} />
+                { active === 'active' && <TabPane tabId='active'>
+                  <CreatorsDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'active'} onClickUpdate={onClickUpdate} />
+                </TabPane> }
+                { active === 'banned' && <TabPane tabId='banned'>
+                  <CreatorsDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'banned'} onClickUpdate={onClickUpdate} />
                 </TabPane> }
               </TabContent>
             </CardBody>
@@ -129,4 +128,4 @@ const CustomersList = () => {
   )
 }
 
-export default CustomersList
+export default CreatorsList

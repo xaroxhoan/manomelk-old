@@ -18,8 +18,8 @@ const FaqList = () => {
   useEffect(() => {
     const params = new URLSearchParams(query.search)
     let tab = params.get('tab')
-    tab = tab === null || tab === '' ? 'enabled' : tab
-    tab = ['enabled', 'disabled'].indexOf(tab) < 0 ? 'enabled' : tab
+    tab = tab === null || tab === '' ? 'all' : tab
+    tab = ['all', 'enabled', 'disabled'].indexOf(tab) < 0 ? 'all' : tab
     setActive(tab)
   }, [query.search])
 
@@ -71,22 +71,28 @@ const FaqList = () => {
           <Card>
             <CardHeader>
               <CardTitle className='has-action'>
-                <span>Faq</span>
+                <span>سوالات متداول</span>
                 <div className='actions'>
-                  <Button block color='relief-primary' onClick={ onClickNewFaq }>Add New</Button>
+                  <Button block color='relief-primary' onClick={ onClickNewFaq }>سوال و جواب جدید</Button>
                 </div>
               </CardTitle>
             </CardHeader>
             <CardBody>
               <Nav className='custom-tab mb-0' tabs>
                 <NavItem>
-                  <NavLink active={active === 'enabled'} to={'/faq'} onClick={() => { toggle('enabled') }}>enabled</NavLink>
+                  <NavLink active={active === 'all'} to={'/faq'} onClick={() => { toggle('all') }}>همه</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink active={active === 'disabled'} to={'/faq?tab=disabled'} onClick={() => { toggle('disabled') }}>disabled</NavLink>
+                  <NavLink active={active === 'enabled'} to={'/faq'} onClick={() => { toggle('enabled') }}>فعال ها</NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink active={active === 'disabled'} to={'/faq?tab=disabled'} onClick={() => { toggle('disabled') }}>غیرفعال ها</NavLink>
                 </NavItem>
               </Nav>
               <TabContent className='tab-content-datatable py-50' activeTab={active.toString()}>
+                { active === 'all' && <TabPane tabId='all'>
+                  <FaqDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'all'} onClickUpdate={onClickUpdate} />
+                </TabPane> }
                 { active === 'enabled' && <TabPane tabId='enabled'>
                   <FaqDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'enabled'} onClickUpdate={onClickUpdate} />
                 </TabPane> }

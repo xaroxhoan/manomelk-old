@@ -5,10 +5,11 @@ import useMoment from '../../hooks/moment'
 import useService from '../../hooks/service'
 import CustomLoader from '../CustomLoader'
 import DataTableSearch from '../DataTableSearch'
+import NoDataComponent from '../NoDataComponent'
 
 const TransactionsDataTable = ({ type }) => {
   const {formatDate} = useMoment()
-  const {orders} = useService()
+  const {transactions} = useService()
   const [pending, setPending] = useState(true)
   const [items, setItems] = useState([])
   const [selectedItem, setSelectedItem] = useState(null)
@@ -18,22 +19,17 @@ const TransactionsDataTable = ({ type }) => {
     totalRows: 0,
     perPage: 8
   })
-  const [filters, _] = useState([
-    { title: 'title', operators: ['equals', 'not equal', 'contains'] },
-    { title: 'alias', operators: ['equals', 'not equal', 'contains'] }
-  ])
-  const [advancedSearch, setAdvancedSearch] = useState([])
 
   const fetchData = async (page) => {
     try {
      setPending(true)
-      const response = await orders.fetchList({
+      const response = await transactions.fetchList({
         status: type,
         page,
         perPage: pagination.perPage,
         searchText
       })
-      const result = response.data.data
+      const result = response.data.result
       setItems(result.items)
       setPagination({ 
         ...pagination,
@@ -55,7 +51,7 @@ const TransactionsDataTable = ({ type }) => {
 
   const onDelete = async () => {
     try {
-      await orders.delete(selectedItem._id)
+      await transactions.delete(selectedItem._id)
       setSelectedItem(null)
       await fetchData(pagination.page)
     } catch (e) {}
@@ -65,34 +61,39 @@ const TransactionsDataTable = ({ type }) => {
     setSearchText(value)
   }
 
-  const onAdvancedSearch = values => {
-    setAdvancedSearch(values)
-  }
-
   const columns = [
     {
-      name: 'Customer',
+      name: 'کاربر',
       selector: row => row.user.name + " " + row.user.family,
       sortable: true
     },
     {
-      name: 'Date',
+      name: 'تاریخ',
       selector: row => formatDate(row.createdAt),
       sortable: true
     },
     {
-      name: 'Status',
-      selector: row => <span className={`text-status text-status-${row.status}`}>{ row.status }</span>,
+      name: 'وضعیت تراکنش',
+      selector: row => {
+        let status = "-"
+        switch (row.status) {
+          case "pending":
+            status = "در حال تایید"
+            break
+          case "success":
+            status = "تایید شده"
+            break
+          case "fail":
+            status = "ناموفق"
+            break
+        }
+        return <span className={`text-status text-status-${row.status}`}>{status}</span>
+      },
       sortable: true
     },
     {
-      name: 'Original Price',
-      selector: row => `$${row.originalPrice}`,
-      sortable: true
-    },
-    {
-      name: 'Total Price',
-      selector: row => `$${row.totalPrice}`,
+      name: 'مبلغ پرداختی (تومان)',
+      selector: row => `${row.price} تومان`,
       sortable: true
     }
   ]
@@ -101,10 +102,7 @@ const TransactionsDataTable = ({ type }) => {
     <Row>
       <DataTableSearch 
         defaultSearchText={searchText}
-        filters={filters}
-        defaultFilters={advancedSearch}
         onSearch={onSearch} 
-        onAdvancedSearch={onAdvancedSearch}
       />
       <Col lg={12} className="sc-datatable-wrapper">
         <DataTable
@@ -120,6 +118,7 @@ const TransactionsDataTable = ({ type }) => {
           selectableRows
           progressPending={pending}
           progressComponent={<CustomLoader columns={columns} />}
+          noDataComponent={<NoDataComponent columns={columns} />}
         />
         <Modal isOpen={selectedItem !== null} toggle={() => setSelectedItem(null)} className='modal-dialog-centered'>
           <ModalHeader toggle={() => setSelectedItem(null)}>Delete</ModalHeader>

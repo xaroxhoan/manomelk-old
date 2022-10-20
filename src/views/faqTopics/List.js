@@ -7,7 +7,7 @@ import useService from '../../hooks/service'
 const FaqTopicList = () => {
   const {faqtopic} = useService()
   const query = useLocation()
-  const [active, setActive] = useState('enabled')
+  const [active, setActive] = useState('all')
   const [Component, setComponent] = useState(null)
   const [updateCounter, setUpdateCounter] = useState(0)
   const [componentInfo, setComponentInfo] = useState({
@@ -18,8 +18,8 @@ const FaqTopicList = () => {
   useEffect(() => {
     const params = new URLSearchParams(query.search)
     let tab = params.get('tab')
-    tab = tab === null || tab === '' ? 'enabled' : tab
-    tab = ['enabled', 'disabled'].indexOf(tab) < 0 ? 'enabled' : tab
+    tab = tab === null || tab === '' ? 'all' : tab
+    tab = ['all', 'enabled', 'disabled'].indexOf(tab) < 0 ? 'all' : tab
     setActive(tab)
   }, [query.search])
 
@@ -71,22 +71,28 @@ const FaqTopicList = () => {
           <Card>
             <CardHeader>
               <CardTitle className='has-action'>
-                <span>Faq Topic</span>
+                <span>گروه های سوالات متداول</span>
                 <div className='actions'>
-                  <Button block color='relief-primary' onClick={ onClickNewFaqTopic }>Add New</Button>
+                  <Button block color='relief-primary' onClick={ onClickNewFaqTopic }>گروه جدید</Button>
                 </div>
               </CardTitle>
             </CardHeader>
             <CardBody>
               <Nav className='custom-tab mb-0' tabs>
                 <NavItem>
-                  <NavLink active={active === 'enabled'} to={'/faqtopic'} onClick={() => { toggle('enabled') }}>enabled</NavLink>
+                  <NavLink active={active === 'all'} to={'/faqtopic'} onClick={() => { toggle('all') }}>همه</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink active={active === 'disabled'} to={'/faqtopic?tab=disabled'} onClick={() => { toggle('disabled') }}>disabled</NavLink>
+                  <NavLink active={active === 'enabled'} to={'/faqtopic?tab=enabled'} onClick={() => { toggle('enabled') }}>فعال ها</NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink active={active === 'disabled'} to={'/faqtopic?tab=disabled'} onClick={() => { toggle('disabled') }}>غیرفعال ها</NavLink>
                 </NavItem>
               </Nav>
               <TabContent className='tab-content-datatable py-50' activeTab={active.toString()}>
+                { active === 'all' && <TabPane tabId='all'>
+                  <FaqTopicDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'all'} onClickUpdate={onClickUpdate} />
+                </TabPane> }
                 { active === 'enabled' && <TabPane tabId='enabled'>
                   <FaqTopicDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'enabled'} onClickUpdate={onClickUpdate} />
                 </TabPane> }

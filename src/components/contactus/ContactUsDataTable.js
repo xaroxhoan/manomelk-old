@@ -6,6 +6,7 @@ import useMoment from '../../hooks/moment'
 import useService from '../../hooks/service'
 import CustomLoader from '../CustomLoader'
 import DataTableSearch from '../DataTableSearch'
+import NoDataComponent from '../NoDataComponent'
 
 const ContactUsDataTable = () => {
   const {formatDate} = useMoment()
@@ -20,11 +21,6 @@ const ContactUsDataTable = () => {
     totalRows: 0,
     perPage: 8
   })
-  const [filters, _] = useState([
-    { title: 'title', operators: ['equals', 'not equal', 'contains'] },
-    { title: 'alias', operators: ['equals', 'not equal', 'contains'] }
-  ])
-  const [advancedSearch, setAdvancedSearch] = useState([])
 
   const fetchData = async (page) => {
     try {
@@ -34,7 +30,7 @@ const ContactUsDataTable = () => {
         perPage: pagination.perPage,
         searchText
       })
-      const result = response.data.data
+      const result = response.data.result
       setItems(result.items)
       setPagination({ 
         ...pagination,
@@ -76,38 +72,34 @@ const ContactUsDataTable = () => {
     setSearchText(value)
   }
 
-  const onAdvancedSearch = values => {
-    setAdvancedSearch(values)
-  }
-
   const columns = [
     {
-      name: 'First Name',
+      name: 'نام',
       selector: row => row.name,
       sortable: true
     },
     {
-      name: 'Last Name',
+      name: 'نام خانوادگی',
       selector: row => row.family,
       sortable: true
     },
     {
-      name: 'Email',
+      name: 'ایمیل',
       selector: row => row.email,
       sortable: true
     },
     {
-      name: 'Phone Number',
-      selector: row => row.phoneNumber,
+      name: 'تلفن همراه',
+      selector: row => row.mobile,
       sortable: true
     },
     {
-      name: 'subject',
+      name: 'موضوع',
       selector: row => row.subject,
       sortable: true
     },
     {
-      name: 'Created At',
+      name: 'تاریخ ایجاد',
       selector: row => formatDate(row.createdAt),
       sortable: true
     },
@@ -120,10 +112,10 @@ const ContactUsDataTable = () => {
         </DropdownToggle>
         <DropdownMenu>
             <DropdownItem href='/' onClick={ (e) => onShowMessage(e, row) }>
-              <Trash className='me-50' size={15} /> <span className='align-middle'>Show Message</span>
+              <Trash className='me-50' size={15} /> <span className='align-middle'>نمایش پیام</span>
             </DropdownItem>
             <DropdownItem href='/' onClick={ (e) => onClickDelete(e, row) }>
-              <Trash className='me-50' size={15} /> <span className='align-middle'>Delete</span>
+              <Trash className='me-50' size={15} /> <span className='align-middle'>حذف</span>
             </DropdownItem>
         </DropdownMenu>
       </UncontrolledDropdown>
@@ -134,12 +126,9 @@ const ContactUsDataTable = () => {
     <Row>
       <DataTableSearch 
         defaultSearchText={searchText}
-        filters={filters}
-        defaultFilters={advancedSearch}
         onSearch={onSearch} 
-        onAdvancedSearch={onAdvancedSearch}
       />
-      <Col lg={12} className="sc-datatable-wrapper">
+      <Col lg={12} className="sc-datatable-wrapper" style={{marginTop: "12px"}}>
         <DataTable
           columns={columns}
           data={items}
@@ -153,20 +142,21 @@ const ContactUsDataTable = () => {
           selectableRows
           progressPending={pending}
           progressComponent={<CustomLoader columns={columns} />}
+          noDataComponent={<NoDataComponent columns={columns} />}
         />
         <Modal isOpen={selectedItem !== null} toggle={() => setSelectedItem(null)} className='modal-dialog-centered'>
           <ModalHeader toggle={() => setSelectedItem(null)}>Delete</ModalHeader>
-          <ModalBody>Are You Sure?</ModalBody>
+          <ModalBody>آیا مطمئن هستید؟</ModalBody>
           <ModalFooter>
-            <Button color='primary' onClick={() => setSelectedItem(null)}>No</Button>
-            <Button color='danger' onClick={onDelete}>Yes</Button>
+            <Button color='primary' onClick={() => setSelectedItem(null)}>خیر</Button>
+            <Button color='danger' onClick={onDelete}>بله</Button>
           </ModalFooter>
         </Modal>
         <Modal isOpen={messageItem !== null} toggle={() => setMessageItem(null)} className='modal-dialog-centered'>
-          <ModalHeader toggle={() => setMessageItem(null)}>Message</ModalHeader>
+          <ModalHeader toggle={() => setMessageItem(null)}>نمایش پیام</ModalHeader>
           <ModalBody>{messageItem !== null ? messageItem.message : ''}</ModalBody>
           <ModalFooter>
-            <Button color='primary' onClick={() => setMessageItem(null)}>Close</Button>
+            <Button color='primary' onClick={() => setMessageItem(null)}>بستن</Button>
           </ModalFooter>
         </Modal>
       </Col>

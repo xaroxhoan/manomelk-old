@@ -4,14 +4,14 @@ import { Card, CardHeader, CardBody, CardTitle, Nav, NavItem, TabContent, TabPan
 import TransactionsDataTable from '@appcomponents/transactions/TransactionsDataTable'
 
 const TransactionsIndex = () => {
-  const [active, setActive] = useState('pending')
+  const [active, setActive] = useState('all')
   const query = useLocation()
 
   useEffect(() => {
     const params = new URLSearchParams(query.search)
     let tab = params.get('tab')
-    tab = tab === null || tab === '' ? 'pending' : tab
-    tab = ['pending', 'cancelled', 'completed'].indexOf(tab) < 0 ? 'pending' : tab
+    tab = tab === null || tab === '' ? 'all' : tab
+    tab = ["all", "pending", "success", "fail"].indexOf(tab) < 0 ? 'all' : tab
     setActive(tab)
   }, [query.search])
 
@@ -25,29 +25,35 @@ const TransactionsIndex = () => {
     <div>
       <Card>
         <CardHeader>
-          <CardTitle>Transactions</CardTitle>
+          <CardTitle>تراکنش ها</CardTitle>
         </CardHeader>
         <CardBody>
           <Nav className='custom-tab' tabs>
             <NavItem>
-              <NavLink active={(active === 'pending').toString()} to={'/transactions'} onClick={() => { toggle('pending') }}>pending</NavLink>
+              <NavLink active={(active === 'all').toString()} to={'/transactions'} onClick={() => { toggle('all') }}>همه تراکنش ها</NavLink>
             </NavItem>
             <NavItem>
-              <NavLink active={(active === 'cancelled').toString()} to={'/transactions?tab=cancelled'} onClick={() => { toggle('cancelled') }}>cancelled</NavLink>
+              <NavLink active={(active === 'pending').toString()} to={'/transactions'} onClick={() => { toggle('pending') }}>تراکنش های در حال تایید</NavLink>
             </NavItem>
             <NavItem>
-              <NavLink active={(active === 'completed').toString()} to={'/transactions?tab=completed'} onClick={() => { toggle('completed') }}>completed</NavLink>
+              <NavLink active={(active === 'success').toString()} to={'/transactions?tab=success'} onClick={() => { toggle('success') }}>تراکنش های موفق</NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink active={(active === 'fail').toString()} to={'/transactions?tab=fail'} onClick={() => { toggle('fail') }}>تراکنش های ناموفق</NavLink>
             </NavItem>
           </Nav>
           <TabContent className='tab-content-datatable py-50' activeTab={active.toString()}>
+            { active === 'all' && <TabPane tabId='all'>
+              <TransactionsDataTable type={ 'all' } />
+            </TabPane> }
             { active === 'pending' && <TabPane tabId='pending'>
               <TransactionsDataTable type={ 'pending' } />
             </TabPane> }
-            { active === 'cancelled' && <TabPane tabId='cancelled'>
-              <TransactionsDataTable type={ 'cancelled' } />
+            { active === 'success' && <TabPane tabId='success'>
+              <TransactionsDataTable type={ 'success' } />
             </TabPane> }
-            { active === 'completed' && <TabPane tabId='completed'>
-              <TransactionsDataTable type={ 'completed' } />
+            { active === 'fail' && <TabPane tabId='fail'>
+              <TransactionsDataTable type={ 'fail' } />
             </TabPane> }
           </TabContent>
         </CardBody>

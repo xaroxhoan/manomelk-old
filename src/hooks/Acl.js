@@ -37,81 +37,15 @@ export const Permissions = {
             action: 'read'
         }
     },
-    Products: {
+    Adverts: {
         Read: {
-            resource: 'Products',
+            resource: 'Adverts',
             action: 'read'
         }
     },
-    Brands: {
+    Operators: {
         Read: {
-            resource: 'Brands',
-            action: 'read'
-        }
-    },
-    Categories: {
-        Read: {
-            resource: 'Categories',
-            action: 'read'
-        }
-    },
-    Attributes: {
-        Read: {
-            resource: 'Attributes',
-            action: 'read'
-        }
-    },
-    Reviews: {
-        Read: {
-            resource: 'Reviews',
-            action: 'read'
-        }
-    },
-    LinkedProducts: {
-        Read: {
-            resource: 'LinkedProducts',
-            action: 'read'
-        }
-    },
-    CustomSearch: {
-        Read: {
-            resource: 'CustomSearch',
-            action: 'read'
-        }
-    },
-    Gifts: {
-        Read: {
-            resource: 'Gifts',
-            action: 'read'
-        }
-    },
-    Discounts: {
-        Read: {
-            resource: 'Discounts',
-            action: 'read'
-        }
-    },
-    CouponCodes: {
-        Read: {
-            resource: 'CouponCodes',
-            action: 'read'
-        }
-    },
-    Sellers: {
-        Read: {
-            resource: 'Sellers',
-            action: 'read'
-        }
-    },
-    Messages: {
-        Read: {
-            resource: 'Messages',
-            action: 'read'
-        }
-    },
-    Commissions: {
-        Read: {
-            resource: 'Commissions',
+            resource: 'Operators',
             action: 'read'
         }
     },
@@ -121,9 +55,21 @@ export const Permissions = {
             action: 'read'
         }
     },
-    Customers: {
+    Advisors: {
         Read: {
-            resource: 'Customers',
+            resource: 'Advisors',
+            action: 'read'
+        }
+    },
+    Creators: {
+        Read: {
+            resource: 'Creators',
+            action: 'read'
+        }
+    },
+    Messages: {
+        Read: {
+            resource: 'Messages',
             action: 'read'
         }
     },

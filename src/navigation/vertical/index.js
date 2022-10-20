@@ -15,18 +15,47 @@ export default [
     ]
   },
   {
+    id: 'adverts-menu',
+    title: 'آگهی ها',
+    icon: <Grid size={20} />,
+    permissions: [
+      { action: Permissions.Adverts.Read.action, resource: Permissions.Adverts.Read.resource }
+    ],
+    children: [
+      {
+        id: 'adverts',
+        title: 'لیست',
+        icon: <Circle size={20} />,
+        navLink: '/adverts',
+        permissions: [
+          { action: Permissions.Adverts.Read.action, resource: Permissions.Adverts.Read.resource }
+        ]
+      }
+    ]
+  },
+  {
     id: 'users-menu',
     title: 'کاربران',
     icon: <Users size={20} />,
     permissions: [
-      { action: Permissions.Sellers.Read.action, resource: Permissions.Sellers.Read.resource },
+      { action: Permissions.Operators.Read.action, resource: Permissions.Operators.Read.resource },
       { action: Permissions.Users.Read.action, resource: Permissions.Users.Read.resource },
-      { action: Permissions.Customers.Read.action, resource: Permissions.Customers.Read.resource }
+      { action: Permissions.Advisors.Read.action, resource: Permissions.Advisors.Read.resource },
+      { action: Permissions.Creators.Read.action, resource: Permissions.Creators.Read.resource }
     ],
     children: [
       {
-        id: 'users',
+        id: 'operators',
         title: 'اپراتورها',
+        icon: <Circle size={20} />,
+        navLink: '/operators',
+        permissions: [
+          { action: Permissions.Operators.Read.action, resource: Permissions.Operators.Read.resource }
+        ]
+      },
+      {
+        id: 'users',
+        title: 'آگهی دهنده ها',
         icon: <Circle size={20} />,
         navLink: '/users',
         permissions: [
@@ -34,16 +63,25 @@ export default [
         ]
       },
       {
-        id: 'customers',
-        title: 'آگهی دهنده ها',
+        id: 'advisors',
+        title: 'مشاوران املاک',
         icon: <Circle size={20} />,
-        navLink: '/customers',
+        navLink: '/advisors',
         permissions: [
-          { action: Permissions.Customers.Read.action, resource: Permissions.Customers.Read.resource }
+          { action: Permissions.Advisors.Read.action, resource: Permissions.Advisors.Read.resource }
+        ]
+      },
+      {
+        id: 'creators',
+        title: 'سازنده ها',
+        icon: <Circle size={20} />,
+        navLink: '/creators',
+        permissions: [
+          { action: Permissions.Creators.Read.action, resource: Permissions.Creators.Read.resource }
         ]
       }
     ]
-  },  
+  },
   {
     id: 'orders-menu',
     title: 'تراکنش ها',

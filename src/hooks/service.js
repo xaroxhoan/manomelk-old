@@ -62,19 +62,6 @@ const useService = () => {
             delete: id => jwtAxios.delete(`/admin/newsletter/delete/${id}`),
             updateStatus: (id, data) => jwtAxios.put(`/admin/newsletter/update/status/${id}`, data)
         },
-        setting: {
-            getByGroup: group => jwtAxios.get(`/admin/setting/${group}`),
-            getByGroupAndKey: (group, key) => jwtAxios.get(`/admin/setting/${group}/${key}`),
-            store: (group, key, value) => jwtAxios.post('/admin/setting/store', {
-                group,
-                key,
-                value
-            }),
-            storeMultiple: (group, values) => jwtAxios.post('/admin/setting/store/multiple', {
-                group,
-                values
-            })
-        },
         messages: {
             store: data => jwtAxios.post('/admin/message', data),
             storeChat: data => jwtAxios.post('/admin/message/chat/store', data),
@@ -98,25 +85,22 @@ const useService = () => {
             fetchList: data => jwtAxios.post('/admin/operator/list', data),
             delete: id => jwtAxios.delete(`/admin/operator/delete/${id}`),
             store: data => jwtAxios.post('/admin/operator/create', data),
-            update: (id, data) => jwtAxios.put(`/admin/operator/${id}`, data),
+            update: (id, data) => jwtAxios.post(`/admin/operator/update`, {
+                _id: id,
+                ...data
+            }),
             get: id => jwtAxios.post('/admin/operator/get', {_id: id}),
-            updateStatus: (id, data) => jwtAxios.put(`/admin/operator/update/status/${id}`, data)
-        },
-        operators: {
-            fetchAll: () => jwtAxios.post('/admin/operator/all'),
-            fetchList: data => jwtAxios.post('/admin/operator/list', data),
-            delete: id => jwtAxios.delete(`/admin/operator/delete/${id}`),
-            store: data => jwtAxios.post('/admin/operator/create', data),
-            update: (id, data) => jwtAxios.put(`/admin/operator/${id}`, data),
-            get: id => jwtAxios.post('/admin/operator/get', {_id: id}),
-            updateStatus: (id, data) => jwtAxios.put(`/admin/operator/update/status/${id}`, data)
+            updateStatus: (id, data) => jwtAxios.post(`/admin/operator/update/status`, {
+                _id: id,
+                ...data
+            })
         },
         users: {
-            who: () => jwtAxios.get(`/share/who`),
+            who: () => jwtAxios.get(`/admin/user/who`),
             updateFields: (id, data) => jwtAxios.put(`/admin/users/update/fields/${id}`, {
                 fields: data
             }),
-            updatePassword: (lastPassword, newPassword) => jwtAxios.post(`/admin/users/password/change`, {
+            updatePassword: (lastPassword, newPassword) => jwtAxios.post(`/admin/user/password/change`, {
                 lastPassword,
                 newPassword
             }),
@@ -124,27 +108,45 @@ const useService = () => {
             fetchList: data => jwtAxios.post('/admin/user/list', data),
             delete: id => jwtAxios.delete(`/admin/user/delete/${id}`),
             store: data => jwtAxios.post('/admin/user/create', data),
-            update: (id, data) => jwtAxios.put(`/admin/user/${id}`, data),
+            update: (id, data) => jwtAxios.post(`/admin/user/update`, {
+                _id: id,
+                ...data
+            }),
             get: id => jwtAxios.post('/admin/user/get', {_id: id}),
-            updateStatus: (id, data) => jwtAxios.put(`/admin/user/update/status/${id}`, data)
+            updateStatus: (id, data) => jwtAxios.post(`/admin/user/update/status`, {
+                _id: id,
+                ...data
+            })
         },
         advisors: {
             fetchAll: () => jwtAxios.post('/admin/advisor/all'),
             fetchList: data => jwtAxios.post('/admin/advisor/list', data),
             delete: id => jwtAxios.delete(`/admin/advisor/delete/${id}`),
             store: data => jwtAxios.post('/admin/advisor/create', data),
-            update: (id, data) => jwtAxios.put(`/admin/advisor/${id}`, data),
+            update: (id, data) => jwtAxios.post(`/admin/advisor/update`, {
+                _id: id,
+                ...data
+            }),
             get: id => jwtAxios.post('/admin/advisor/get', {_id: id}),
-            updateStatus: (id, data) => jwtAxios.put(`/admin/advisor/update/status/${id}`, data)
+            updateStatus: (id, data) => jwtAxios.post(`/admin/advisor/update/status`, {
+                _id: id,
+                ...data
+            })
         },
         creators: {
             fetchAll: () => jwtAxios.post('/admin/creator/all'),
             fetchList: data => jwtAxios.post('/admin/creator/list', data),
             delete: id => jwtAxios.delete(`/admin/creator/delete/${id}`),
             store: data => jwtAxios.post('/admin/creator/create', data),
-            update: (id, data) => jwtAxios.put(`/admin/creator/${id}`, data),
+            update: (id, data) => jwtAxios.post(`/admin/creator/update`, {
+                _id: id,
+                ...data
+            }),
             get: id => jwtAxios.post('/admin/creator/get', {_id: id}),
-            updateStatus: (id, data) => jwtAxios.put(`/admin/creator/update/status/${id}`, data)
+            updateStatus: (id, data) => jwtAxios.post(`/admin/creator/update/status`, {
+                _id: id,
+                ...data
+            })
         },
         transactions: {
             fetchAll: () => jwtAxios.post('/admin/transaction/all'),
@@ -170,6 +172,19 @@ const useService = () => {
         contactus: {
             fetchList: data => jwtAxios.post('/admin/contact/list', data),
             delete: id => jwtAxios.delete(`/admin/contact/delete/${id}`)
+        },
+        setting: {
+            getByGroup: group => jwtAxios.post('/admin/setting/group', {group}),
+            getByGroupAndKey: (group, key) => jwtAxios.post('/admin/setting/group/key', {group, key}),
+            store: (group, key, value) => jwtAxios.post('/admin/setting/store', {
+                group,
+                key,
+                value
+            }),
+            storeMultiple: (group, values) => jwtAxios.post('/admin/setting/store/multiple', {
+                group,
+                values
+            })
         }
     }
 }

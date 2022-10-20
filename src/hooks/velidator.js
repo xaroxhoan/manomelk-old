@@ -16,33 +16,33 @@ const useValidator = () => {
             switch (rule.name) {
               case 'required':
                 if (value.length <= 0) {
-                  errors[field] = `${field} can not be empty`
+                  errors[field] = `مقدار باید وارد شود`
                 }
                 break
               case 'number':
                 if (rule.int === true && /^[\-\+]?[0-9]+$/.test(value) === false) {
-                  errors[field] = `${field} can be only integer`
+                  errors[field] = `مقدار وارد شده باید عدد صحیح باشد`
                   break
                 }
                 if (/^[\-\+]?[0-9]*(\.)?[0-9]+$/.test(value) === false) {
-                  errors[field] = `${field} can be only number`
+                  errors[field] = `مقدار وارد شده باید عدد باشد`
                   break
                 }
                 if (rule.min !== undefined) {
                   if (value < rule.min) {
-                    errors[field] = `${field} should be greater than or equal to ${rule.min}`
+                    errors[field] = `مقدار وارد شده باید بیشتر یا مساوی با ${rule.min} باشد`
                     break
                   }
                 }
                 break
               case 'url':
                 if (/^(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})$/.test(value) === false) {
-                    errors[field] = `${field} should be a valid url`
+                    errors[field] = `لینک وارد شده معتبر نیست`
                 }
                 break
               case 'email':
                 if (/^\S+@\S+\.\S+$/.test(value) === false) {
-                    errors[field] = `${field} should be a valid email address`
+                    errors[field] = `آدرس ایمیل معتبر نیست`
                 }
                 break
               case 'unique':
@@ -52,8 +52,8 @@ const useValidator = () => {
                         conditions: rule.conditions,
                         exceptIds: rule.exceptIds === undefined ? [] : rule.exceptIds
                     })
-                    if (response.data.data === false) {
-                        errors[field] = `${field} is already exists`
+                    if (response.data.result === false) {
+                        errors[field] = `از قبل وجود دارد`
                     }
                 } catch (e) {}
                 break

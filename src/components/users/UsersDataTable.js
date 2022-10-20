@@ -90,7 +90,7 @@ const UsersDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
       width: '120px',
       selector: row => <div className='d-flex flex-column'>
         <div className='form-switch form-check-primary'>
-          <Input type='switch' name='primary' onChange={() => onChangeSwitch(row)} defaultChecked={row.status === 'approved'} value={type === 'approved' ? 'rejected' : 'approved'} />
+          <Input type='switch' name='primary' onChange={() => onChangeSwitch(row)} defaultChecked={row.status === 'active'} value={type === 'active' ? 'banned' : 'active'} />
         </div>
       </div>
     },
@@ -103,10 +103,10 @@ const UsersDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
         </DropdownToggle>
         <DropdownMenu>
             <DropdownItem href={'#'} onClick={ e => onClickEdit(e, row) }>
-              <Edit className='me-50' size={15} /> <span className='align-middle'>Edit</span>
+              <Edit className='me-50' size={15} /> <span className='align-middle'>ویرایش</span>
             </DropdownItem>
             <DropdownItem href='/' onClick={ (e) => onClickDelete(e, row) }>
-              <Trash className='me-50' size={15} /> <span className='align-middle'>Delete</span>
+              <Trash className='me-50' size={15} /> <span className='align-middle'>حذف</span>
             </DropdownItem>
         </DropdownMenu>
       </UncontrolledDropdown>
@@ -136,11 +136,11 @@ const UsersDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
           noDataComponent={<NoDataComponent columns={columns} />}
         />
         <Modal isOpen={selectedItem !== null} toggle={() => setSelectedItem(null)} className='modal-dialog-centered'>
-          <ModalHeader toggle={() => setSelectedItem(null)}>Delete</ModalHeader>
-          <ModalBody>Are You Sure?</ModalBody>
+          <ModalHeader toggle={() => setSelectedItem(null)}>حذف</ModalHeader>
+          <ModalBody>آیا مطمئن هستید؟</ModalBody>
           <ModalFooter>
-            <Button color='primary' onClick={() => setSelectedItem(null)}>No</Button>
-            <Button color='danger' onClick={onDelete}>Yes</Button>
+            <Button color='primary' onClick={() => setSelectedItem(null)}>خیر</Button>
+            <Button color='danger' onClick={onDelete}>بله</Button>
           </ModalFooter>
         </Modal>
       </Col>

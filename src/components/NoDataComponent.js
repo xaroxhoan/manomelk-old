@@ -11,7 +11,7 @@ const NoDataComponent = ({ columns }) => {
             <tbody>
                 <tr>
                     <td colSpan={30}>
-                        <div className="datatable-loading">رکوردی برای نمایش وجود ندارد</div>
+                        <div className="datatable-loading pt-10">رکوردی برای نمایش وجود ندارد</div>
                     </td>
                 </tr>
             </tbody>

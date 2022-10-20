@@ -409,6 +409,17 @@ a.navbar-brand {
 .datatable-loading {
     width: 100%; text-align: center; padding-top: 40px;
 }
+.pt-10 {
+    padding-top: 10px !important;
+}
+.px-10 {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.py-10 {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
 .add-wrapper {
     display: flex; flex-direction: column; justify-content: center; align-items: center;
 }

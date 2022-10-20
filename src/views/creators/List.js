@@ -58,7 +58,7 @@ const CreatorsList = () => {
   const onChangePublishSwitch = async (row, pagination, callbackFetchData) => {
     try {
        await creators.updateStatus(row._id, {
-         status: row.status === 'approved' ? 'rejected' : 'approved'
+         status: row.status === 'active' ? 'banned' : 'active'
        })
        await callbackFetchData(pagination.page)
      } catch (e) {}
@@ -73,7 +73,7 @@ const CreatorsList = () => {
               <CardTitle className='has-action'>
                 <span>سازنده ها</span>
                 <div className='actions'>
-                  <Button block color='relief-primary' onClick={ onClickNewCreator }>اپراتور جدید</Button>
+                  <Button block color='relief-primary' onClick={ onClickNewCreator }>سازنده جدید</Button>
                 </div>
               </CardTitle>
             </CardHeader>
@@ -113,11 +113,11 @@ const CreatorsList = () => {
           { Component === null && <Card>
             <CardHeader>
               <CardTitle>
-                <span>No Record Selected</span>
+                <span>هیچ آیتمی انتخاب نشده است</span>
               </CardTitle>
             </CardHeader>
             <CardBody>
-              <div className='no-records'>No Record Selected</div>
+              <div className='no-records'>هیچ آیتمی انتخاب نشده است</div>
             </CardBody>
           </Card> }
           { Component !== null && componentInfo.type === 'create' && <Component onSaved={onSaved} onCancel={onCancel} />}

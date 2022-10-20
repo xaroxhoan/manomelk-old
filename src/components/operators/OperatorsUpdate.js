@@ -3,11 +3,11 @@ import { Row, Col, Input, Card, CardHeader, CardBody, CardTitle, Label, Button, 
 import Select from 'react-select'
 import useService from '../../hooks/service'
 import useValidator from '../../hooks/velidator'
-import { Permissions } from '../../hooks/Acl'
-import BoxAlert from '@appcomponents/alert/BoxAlert'
+import { PermissionPersianTitle, Permissions } from '../../hooks/Acl'
+import useToast from '../../hooks/toast'
 
 const OperatorsUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
-  const {users} = useService()
+  const {operators} = useService()
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(true)
   const {validate} = useValidator()
@@ -19,9 +19,9 @@ const OperatorsUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
     mobile: '',
     password: '',
     selectedPermissions: [],
-    status: { label: 'Approved', value: 'approved' },
-    successMessage: ''
+    status: { label: 'Approved', value: 'approved' }
   })
+  const {toastError, toastSuccess} = useToast()
 
   useEffect(() => {
     if (defaultInfo === undefined || defaultInfo === null) {
@@ -34,8 +34,7 @@ const OperatorsUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
         email: defaultInfo.email,
         mobile: defaultInfo.mobile,
         selectedPermissions: defaultInfo.permissions === undefined || defaultInfo.permissions === null ? [] : defaultInfo.permissions,
-        status: { label: defaultInfo.status.charAt(0).toUpperCase() + defaultInfo.status.slice(1), value: defaultInfo.status },
-        successMessage: ''
+        status: { label: (defaultInfo.status === "active" ? "تایید شده" : "مسدود"), value: defaultInfo.status }
       })
       setErrors({})
     } catch (e) {}
@@ -67,31 +66,26 @@ const OperatorsUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
       return
     }
     try {
-      const response = await users.updateUser(defaultInfo._id, {
+      const response = await operators.update(defaultInfo._id, {
         name: state.name,
         family: state.family,
         email: state.email,
         mobile: state.mobile,
         password: state.password,
         status: state.status.value,
-        selectedPermissions: state.selectedPermissions,
-        type: 'operator'
+        selectedPermissions: state.selectedPermissions
       })
       onUpdated(response)
       setErrors({})
       setIsSaveClicked(false)
-      setState({
-        ...state,
-        successMessage: response.data.message.message 
-      })
+      if (response.data.statusCode === 200) {
+        toastSuccess("تغییرات با موفقیت ثبت گردید")
+      } else {
+        toastError(response.data.message)
+      }
     } catch (e) {
-      if (e.response.status === 422) {
-        const errs = {}
-        e.response.data.messages.forEach(item => {
-          errs[item.field] = item.message
-        })
-        setState({ ...state, successMessage: '' })
-        setErrors(errs)
+      if (e.response.status === 400) {
+        toastError(e.response.data.message[0])
       }
     }
   }
@@ -129,29 +123,26 @@ const OperatorsUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
       <Card>
         <CardHeader>
           <CardTitle className='has-action'>
-            <span>Update User</span>
+            <span>ویرایش کاربر</span>
             <div className='actions'>
-              <Button color='relief-primary' onClick={ onUpdate }>Update</Button>&nbsp;
-              <Button color='relief-danger' onClick={ onCancel }>Cancel</Button>
+              <Button color='relief-primary' onClick={ onUpdate }>ویرایش</Button>&nbsp;
+              <Button color='relief-danger' onClick={ onCancel }>لغو</Button>
             </div>
           </CardTitle>
         </CardHeader>
         <CardBody>
-          <BoxAlert type='success' visible={state.successMessage !== ''}>
-            { state.successMessage }
-          </BoxAlert>
-          <Row>
+        <Row>
             <Col lg='6' md='12'>
               <div className='mb-2'>
-                <Label>First Name</Label>
-                <Input placeholder='First Name...' autoComplete='off' value={state.name} onChange={ e => setState({ ...state, name: e.target.value }) } invalid={ errors.name !== undefined } />
+                <Label>نام</Label>
+                <Input placeholder='نام...' autoComplete='off' value={state.name} onChange={ e => setState({ ...state, name: e.target.value }) } invalid={ errors.name !== undefined } />
                 <div className="invalid-feedback">{ errors.name !== undefined ? errors.name : '' }</div>
               </div>
             </Col>
             <Col lg='6' md='12'>
               <div className='mb-2'>
-                <Label>Last Name</Label>
-                <Input placeholder='Last Name...' autoComplete='off' value={state.family} onChange={ e => setState({ ...state, family: e.target.value }) } invalid={ errors.family !== undefined } />
+                <Label>نام خانوادگی</Label>
+                <Input placeholder='نام خانوادگی...' autoComplete='off' value={state.family} onChange={ e => setState({ ...state, family: e.target.value }) } invalid={ errors.family !== undefined } />
                 <div className="invalid-feedback">{ errors.family !== undefined ? errors.family : '' }</div>
               </div>
             </Col>
@@ -159,15 +150,15 @@ const OperatorsUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
           <Row>
             <Col lg='6' md='12'>
               <div className='mb-2'>
-                <Label>Mobile</Label>
-                <Input placeholder='Mobile...' autoComplete='off' value={state.mobile} onChange={ e => setState({ ...state, mobile: e.target.value }) } invalid={ errors.mobile !== undefined } />
+                <Label>تلفن همراه</Label>
+                <Input placeholder='تلفن همراه...' autoComplete='off' value={state.mobile} onChange={ e => setState({ ...state, mobile: e.target.value }) } invalid={ errors.mobile !== undefined } />
                 <div className="invalid-feedback">{ errors.mobile !== undefined ? errors.mobile : '' }</div>
               </div>
             </Col>
             <Col lg='6' md='12'>
               <div className='mb-2'>
-                <Label>Email</Label>
-                <Input placeholder='Email...' autoComplete='off' value={state.email} onChange={ e => setState({ ...state, email: e.target.value }) } invalid={ errors.email !== undefined } />
+                <Label>ایمیل</Label>
+                <Input placeholder='ایمیل...' autoComplete='off' value={state.email} onChange={ e => setState({ ...state, email: e.target.value }) } invalid={ errors.email !== undefined } />
                 <div className="invalid-feedback">{ errors.email !== undefined ? errors.email : '' }</div>
               </div>
             </Col>
@@ -175,23 +166,21 @@ const OperatorsUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
           <Row>
             <Col lg='6' md='12'>
               <div className='mb-2'>
-                <Label>Password</Label>
-                <Input type='password' autoComplete='off' placeholder='Password...' value={state.password} onChange={ e => setState({ ...state, password: e.target.value }) } invalid={ errors.password !== undefined } />
+                <Label>رمز عبور</Label>
+                <Input type='password' autoComplete='off' placeholder='رمز عبور...' value={state.password} onChange={ e => setState({ ...state, password: e.target.value }) } invalid={ errors.password !== undefined } />
                 <div className="invalid-feedback">{ errors.password !== undefined ? errors.password : '' }</div>
               </div>
             </Col>
-          </Row>
-          <Row>
             <Col lg='12' md='12'>
               <div className='mb-2'>
-                <Label>Status</Label>
+                <Label>وضعیت</Label>
                 <Select
                   cacheOptions
                   defaultOptions
                   value={state.status}
                   options={[
-                    { label: 'Published', value: 'published' },
-                    { label: 'Unpublished', value: 'unpublished' }
+                    { label: 'تایید شده', value: 'active' },
+                    { label: 'مسدود', value: 'banned' }
                   ]}
                   onChange={ selected => setState({ ...state, status: selected }) }
                 />
@@ -202,7 +191,7 @@ const OperatorsUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
           <Row>
             <Col lg='12' md='12'>
               <div className='mb-2'>
-                <Label>Permissions</Label>
+                <Label>مجوزهای دسترسی</Label>
                 <div className="demo-inline-spacing">
                   {[...Object.keys(Permissions)].map(permissionParent => {
                     return [...Object.keys(Permissions[permissionParent])].map(permissionChild => {
@@ -214,7 +203,7 @@ const OperatorsUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
                           onChange={e => onChange(e, permissionParent, permissionChild)}
                           value={isCheckboxChecked(Permissions[permissionParent][permissionChild].action, Permissions[permissionParent][permissionChild].resource) ? 'off' : 'on'}
                           checked={isCheckboxChecked(Permissions[permissionParent][permissionChild].action, Permissions[permissionParent][permissionChild].resource)} />
-                        <Label for={permissionParent + permissionChild} className="form-check-label form-label">{permissionParent} - {permissionChild}</Label>
+                        <Label for={permissionParent + permissionChild} className="form-check-label form-label">{PermissionPersianTitle(permissionParent, permissionChild)}</Label>
                       </div>
                     })
                   })}

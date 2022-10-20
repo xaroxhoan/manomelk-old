@@ -34,6 +34,25 @@ export default [
     ]
   },
   {
+    id: 'tarrifs-menu',
+    title: 'تعرفه ها',
+    icon: <CreditCard size={20} />,
+    permissions: [
+      { action: Permissions.Tarrifs.Read.action, resource: Permissions.Tarrifs.Read.resource }
+    ],
+    children: [
+      {
+        id: 'tarrifs',
+        title: 'لیست',
+        icon: <Circle size={20} />,
+        navLink: '/tarrifs',
+        permissions: [
+          { action: Permissions.Tarrifs.Read.action, resource: Permissions.Tarrifs.Read.resource }
+        ]
+      }
+    ]
+  },
+  {
     id: 'users-menu',
     title: 'کاربران',
     icon: <Users size={20} />,
@@ -87,7 +106,6 @@ export default [
     title: 'تراکنش ها',
     icon: <ShoppingBag size={20} />,
     permissions: [
-      { action: Permissions.Orders.Read.action, resource: Permissions.Orders.Read.resource },
       { action: Permissions.Transactions.Read.action, resource: Permissions.Transactions.Read.resource }
     ],
     children: [
@@ -217,8 +235,8 @@ export default [
   {
     header: 'وب سایت',
     permissions: [
-      { action: Permissions.Menus.Read.action, resource: Permissions.Menus.Read.resource },
-      { action: Permissions.HomeSliders.Read.action, resource: Permissions.HomeSliders.Read.resource }
+      { action: Permissions.ShopInfo.Read.action, resource: Permissions.ShopInfo.Read.resource },
+      { action: Permissions.SocialMedia.Read.action, resource: Permissions.SocialMedia.Read.resource }
     ]
   },
   {

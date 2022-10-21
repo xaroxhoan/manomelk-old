@@ -188,7 +188,7 @@ const AdminHome = () => {
                             <CardTitle></CardTitle>
                         </CardHeader>
                         <CardBody className='pt-26'>
-                            <TransactionsDataTable type="pending" />
+                            <TransactionsDataTable type="all" />
                         </CardBody>
                     </Card>
                 </Col>

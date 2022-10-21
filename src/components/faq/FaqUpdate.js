@@ -4,11 +4,11 @@ import Select from 'react-select'
 import useService from '../../hooks/service'
 import useValidator from '../../hooks/velidator'
 import AsyncCreatableSelect from 'react-select/async-creatable'
-import BoxAlert from '@appcomponents/alert/BoxAlert'
 import { Editor } from 'react-draft-wysiwyg'
 import { convertToRaw, EditorState, ContentState, convertFromHTML } from 'draft-js'
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 import draftToHtml from 'draftjs-to-html'
+import useToast from '../../hooks/toast'
 
 const FaqUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
   const {faq, faqtopic} = useService()
@@ -20,12 +20,11 @@ const FaqUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
     title: '',
     description: '',
     sort: 0,
-    status: { label: 'Enabled', value: 'enabled' },
-    updateCounter: 0,
-    successMessage: ''
+    status: { label: 'فعال', value: 'enabled' },
+    updateCounter: 0
   })
   const [editorState, setEditorState] = useState(() => EditorState.createEmpty())
-
+  const {toastError, toastSuccess} = useToast()
   const [topicState, setTopicState] = useState({
     isLoading: false,
     options: [],
@@ -43,8 +42,7 @@ const FaqUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
         description: defaultInfo.description,
         sort: defaultInfo.sort,
         updateCounter: 0,
-        status: { label: defaultInfo.status.charAt(0).toUpperCase() + defaultInfo.status.slice(1), value: defaultInfo.status },
-        successMessage: ''
+        status: { label: (defaultInfo.status === "enabled" ? "فعال" : "غیرفعال"), value: defaultInfo.status }
       })
       setTopicState({
         ...topicState,
@@ -90,31 +88,27 @@ const FaqUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
       const response = await faq.update(defaultInfo._id, {
         topic: topicState.topic === undefined ? null : topicState.topic.value,
         title: state.title,
-        sort: state.sort,
+        sort: parseInt(state.sort),
         description: state.description,
         status: state.status.value
       })
       onUpdated(response)
-      setState({ 
-        ...state,
-        successMessage: response.data.message.message 
-      })
       setErrors({})
+      if (response.data.statusCode === 200) {
+        toastSuccess("تغییرات با موفقیت ثبت گردید")
+      } else {
+        toastError(response.data.message)
+      }
     } catch (e) {
-      if (e?.response?.status === 422) {
-        const errs = {}
-        e.response.data.messages.forEach(item => {
-          errs[item.field] = item.message
-        })
-        setState({ ...state, successMessage: '' })
-        setErrors(errs)
+      if (e.response.status === 400) {
+        toastError(e.response.data.message[0])
       }
     }
   }
 
   const loadTopicOptions = async inputValue => {
     const response = await faqtopic.fetchAll()
-    let options = response.data.data.map(item => {
+    let options = response.data.result.map(item => {
       return {
         value: item._id,
         label: item.title
@@ -129,7 +123,7 @@ const FaqUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
   const handleTopicCreate = async title => {
       setTopicState({ ...topicState, isLoading: true })
       const response = await faqtopic.store({ title })
-      const createdTopic = response.data.data
+      const createdTopic = response.data.result
       const newOption = {
         value: createdTopic._id,
         label: createdTopic.title
@@ -157,21 +151,18 @@ const FaqUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
       <Card>
         <CardHeader>
           <CardTitle className='has-action'>
-            <span>Update Faq</span>
+            <span>ویرایش سوال متداول</span>
             <div className='actions'>
-              <Button color='relief-primary' onClick={ onUpdate }>Update</Button>&nbsp;
-              <Button color='relief-danger' onClick={ onCancel }>Cancel</Button>
+              <Button color='relief-primary' onClick={ onUpdate }>ویرایش</Button>&nbsp;
+              <Button color='relief-danger' onClick={ onCancel }>لغو</Button>
             </div>
           </CardTitle>
         </CardHeader>
         <CardBody>
-          <BoxAlert type='success' visible={state.successMessage !== ''}>
-            { state.successMessage }
-          </BoxAlert>
           <Row>
             <Col lg='6' md='12'>
               <div className='mb-2 has-error'>
-                  <Label>Topic</Label>
+                  <Label>گروه</Label>
                   <AsyncCreatableSelect
                       key={topicState.options.length + state.updateCounter}
                       cacheOptions
@@ -189,32 +180,23 @@ const FaqUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
             </Col>
             <Col lg='6' md='12'>
               <div className='mb-2'>
-                <Label>Title</Label>
-                <Input placeholder='Title...' value={state.title} onChange={ e => setState({ ...state, title: e.target.value }) } invalid={ errors.title !== undefined } />
+                <Label>عنوان</Label>
+                <Input placeholder='عنوان...' value={state.title} onChange={ e => setState({ ...state, title: e.target.value }) } invalid={ errors.title !== undefined } />
                 <div className="invalid-feedback">{ errors.title !== undefined ? errors.title : '' }</div>
-              </div>
-            </Col>
-          </Row>
-          <Row>
-            {/* <Col lg='12' md='12'>
-              <div className='mb-2'>
-                <Label>Sort Priority</Label>
-                <Input placeholder='Sort Pririty...' value={state.sort} onChange={ e => setState({ ...state, sort: e.target.value }) } invalid={ errors.sort !== undefined } />
-                <div className="invalid-feedback">{ errors.sort !== undefined ? errors.sort : '' }</div>
               </div>
             </Col>
           </Row>
           <Row>
             <Col lg='12' md='12'>
               <div className='mb-2'>
-                <Label>Description</Label>
-                <Input type='textarea' style={{height: "200px"}} placeholder='Description...' value={state.description} onChange={ e => setState({ ...state, description: e.target.value }) } invalid={ errors.description !== undefined } />
-                <div className="invalid-feedback">{ errors.description !== undefined ? errors.description : '' }</div>
+                <Label>اولویت</Label>
+                <Input placeholder='اولویت...' value={state.sort} onChange={ e => setState({ ...state, sort: e.target.value }) } invalid={ errors.sort !== undefined } />
+                <div className="invalid-feedback">{ errors.sort !== undefined ? errors.sort : '' }</div>
               </div>
-            </Col> */}
+            </Col>
             <Col lg={12} md={12}>
               <div className={`mb-2 row box-editor-wrapper ${ errors.description !== undefined ? 'has-error' : '' }`}>
-                <Label>Description</Label>
+                <Label>توضیحات</Label>
                 <div className='box-editor-content'>
                   <Editor 
                     editorState={editorState} 
@@ -240,14 +222,14 @@ const FaqUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
           <Row>
             <Col lg='6' md='12'>
               <div className='mb-2'>
-                <Label>Status</Label>
+                <Label>وضعیت</Label>
                 <Select
                   cacheOptions
                   defaultOptions
                   value={state.status}
                   options={[
-                    { label: 'Enabled', value: 'enabled' },
-                    { label: 'Disabled', value: 'disabled' }
+                    { label: 'فعال', value: 'enabled' },
+                    { label: 'غیرفعال', value: 'disabled' }
                   ]}
                   onChange={ selected => setState({ ...state, status: selected }) }
                 />

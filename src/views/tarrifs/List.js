@@ -1,16 +1,15 @@
 import { Card, CardHeader, CardBody, CardTitle, Button, Row, Col, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap'
-import { useEffect, useState, lazy } from 'react'
-import CommentsDataTable from '@appcomponents/blog/CommentsDataTable'
+import TarrifsDataTable from '@appcomponents/tarrifs/TarrifsDataTable'
+import { useState, lazy, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import useService from '../../hooks/service'
 
-const BlogReviews = () => {
-  const {blog} = useService()
+const TarrifsList = () => {
+  const {tarrifs} = useService()
   const query = useLocation()
-  const [active, setActive] = useState('approved')
+  const [active, setActive] = useState('all')
   const [Component, setComponent] = useState(null)
   const [updateCounter, setUpdateCounter] = useState(0)
-  const [createCounter, setCreateCounter] = useState(0)
   const [componentInfo, setComponentInfo] = useState({
     type: null,
     data: null
@@ -19,8 +18,8 @@ const BlogReviews = () => {
   useEffect(() => {
     const params = new URLSearchParams(query.search)
     let tab = params.get('tab')
-    tab = tab === null || tab === '' ? 'approved' : tab
-    tab = ['approved', 'pending'].indexOf(tab) < 0 ? 'approved' : tab
+    tab = tab === null || tab === '' ? 'all' : tab
+    tab = ['all', 'enabled', 'disabled'].indexOf(tab) < 0 ? 'all' : tab
     setActive(tab)
   }, [query.search])
 
@@ -30,9 +29,8 @@ const BlogReviews = () => {
     }
   }
 
-  const onClickNewComment = _ => {
-    setComponentInfo({ ...componentInfo, type: 'create', data: null })
-    setCreateCounter(createCounter + 1)
+  const onClickNewTarrif = _ => {
+    setComponentInfo({ ...componentInfo, type: 'create' })
   }
 
   const onClickUpdate = row => {
@@ -50,17 +48,17 @@ const BlogReviews = () => {
 
   useEffect(() => {
     if (componentInfo.type === 'update') {
-      setComponent(lazy(() => import('@appcomponents/blog/CommentsUpdate')))
+      setComponent(lazy(() => import('@appcomponents/tarrifs/TarrifsUpdate')))
     }
     if (componentInfo.type === 'create') {
-      setComponent(lazy(() => import('@appcomponents/blog/CommentsCreate')))
+      setComponent(lazy(() => import('@appcomponents/tarrifs/TarrifsCreate')))
     }
   }, [componentInfo.type])
 
   const onChangePublishSwitch = async (row, pagination, callbackFetchData) => {
     try {
-       await blog.reviews.updateStatus(row._id, {
-         status: row.status === 'approved' ? 'pending' : 'approved'
+       await tarrifs.updateStatus(row._id, {
+         status: row.status === 'enabled' ? 'disabled' : 'enabled'
        })
        await callbackFetchData(pagination.page)
      } catch (e) {}
@@ -73,33 +71,33 @@ const BlogReviews = () => {
           <Card>
             <CardHeader>
               <CardTitle className='has-action'>
-                <span>Reviews</span>
+                <span>تعرفه ها</span>
                 <div className='actions'>
-                  <Button block color='relief-primary' onClick={ onClickNewComment }>Add New</Button>
+                  <Button block color='relief-primary' onClick={ onClickNewTarrif }>تعرفه جدید</Button>
                 </div>
               </CardTitle>
             </CardHeader>
             <CardBody>
               <Nav className='custom-tab mb-0' tabs>
                 <NavItem>
-                  <NavLink active={active === 'approved'} to={'/reviews'} onClick={() => { toggle('approved') }}>approved</NavLink>
+                  <NavLink active={active === 'all'} to={'/tarrifs'} onClick={() => { toggle('all') }}>همه</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink active={active === 'pending'} to={'/reviews?tab=pending'} onClick={() => { toggle('pending') }}>pending</NavLink>
+                  <NavLink active={active === 'enabled'} to={'/tarrifs'} onClick={() => { toggle('enabled') }}>فعال ها</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink active={active === 'rejected'} to={'/reviews?tab=rejected'} onClick={() => { toggle('rejected') }}>rejected</NavLink>
+                  <NavLink active={active === 'disabled'} to={'/tarrifs?tab=disabled'} onClick={() => { toggle('disabled') }}>غیرفعال ها</NavLink>
                 </NavItem>
               </Nav>
               <TabContent className='tab-content-datatable py-50' activeTab={active.toString()}>
-                { active === 'approved' && <TabPane tabId='approved'>
-                  <CommentsDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'approved'} onClickUpdate={onClickUpdate} />
+                { active === 'all' && <TabPane tabId='all'>
+                  <TarrifsDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'all'} onClickUpdate={onClickUpdate} />
                 </TabPane> }
-                { active === 'pending' && <TabPane tabId='pending'>
-                  <CommentsDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'pending'} onClickUpdate={onClickUpdate} />
+                { active === 'enabled' && <TabPane tabId='enabled'>
+                  <TarrifsDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'enabled'} onClickUpdate={onClickUpdate} />
                 </TabPane> }
-                { active === 'rejected' && <TabPane tabId='rejected'>
-                  <CommentsDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'rejected'} onClickUpdate={onClickUpdate} />
+                { active === 'disabled' && <TabPane tabId='disabled'>
+                  <TarrifsDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'disabled'} onClickUpdate={onClickUpdate} />
                 </TabPane> }
               </TabContent>
             </CardBody>
@@ -116,7 +114,7 @@ const BlogReviews = () => {
               <div className='no-records'>هیچ آیتمی انتخاب نشده است</div>
             </CardBody>
           </Card> }
-          { Component !== null && componentInfo.type === 'create' && <Component key={createCounter} defaultInfo={componentInfo.data} onSaved={onSaved} onCancel={onCancel} />}
+          { Component !== null && componentInfo.type === 'create' && <Component onSaved={onSaved} onCancel={onCancel} />}
           { Component !== null && componentInfo.type === 'update' && <Component key={componentInfo.data._id} onUpdated={onSaved} defaultInfo={componentInfo.data} onCancel={onCancel} />}
         </Col>
       </Row>
@@ -124,4 +122,4 @@ const BlogReviews = () => {
   )
 }
 
-export default BlogReviews
+export default TarrifsList

@@ -26,6 +26,13 @@ const Routes = [
     ]
   },
   {
+    path: "/tarrifs",
+    component: lazy(() => import("../../views/tarrifs/List")),
+    permissions: [
+      { action: Permissions.Tarrifs.Read.action, resource: Permissions.Tarrifs.Read.resource }
+    ]
+  },
+  {
     path: "/operators",
     component: lazy(() => import("../../views/operators/List")),
     permissions: [

@@ -65,11 +65,11 @@ const ArticleCategoriesList = () => {
           { Component === null && <Card>
             <CardHeader>
               <CardTitle>
-                <span>No Record Selected</span>
+                <span>هیچ آیتمی انتخاب نشده است</span>
               </CardTitle>
             </CardHeader>
             <CardBody>
-              <div className='no-records'>No Record Selected</div>
+              <div className='no-records'>هیچ آیتمی انتخاب نشده است</div>
             </CardBody>
           </Card> }
           { Component !== null && componentInfo.type === 'create' && <Component key={createCounter} defaultInfo={componentInfo.data} onSaved={onSaved} onCancel={onCancel} />}

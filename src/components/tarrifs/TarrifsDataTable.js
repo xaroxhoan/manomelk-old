@@ -7,8 +7,8 @@ import CustomLoader from '../CustomLoader'
 import DataTableSearch from '../DataTableSearch'
 import NoDataComponent from '../NoDataComponent'
 
-const FaqDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
-  const {faq} = useService()
+const TarrifsDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
+  const {tarrifs} = useService()
   const [pending, setPending] = useState(true)
   const [items, setItems] = useState([])
   const [selectedItem, setSelectedItem] = useState(null)
@@ -22,7 +22,7 @@ const FaqDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
   const fetchData = async (page) => {
     try {
      setPending(true)
-      const response = await faq.fetchList({
+      const response = await tarrifs.fetchList({
         status: type,
         page,
         perPage: pagination.perPage,
@@ -55,7 +55,7 @@ const FaqDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
 
   const onDelete = async () => {
     try {
-      await faq.delete(selectedItem._id)
+      await tarrifs.delete(selectedItem._id)
       setSelectedItem(null)
       await fetchData(pagination.page)
     } catch (e) {}
@@ -75,11 +75,6 @@ const FaqDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
   }
 
   const columns = [
-    {
-      name: 'گروه',
-      selector: row => row.topic.title,
-      sortable: true
-    },
     {
       name: 'عنوان',
       selector: row => <a href={'#'} onClick={ e => onClickEdit(e, row) }>{row.title}</a>,
@@ -105,9 +100,9 @@ const FaqDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
             <DropdownItem href={'#'} onClick={ e => onClickEdit(e, row) }>
               <Edit className='me-50' size={15} /> <span className='align-middle'>ویرایش</span>
             </DropdownItem>
-            <DropdownItem href='/' onClick={ (e) => onClickDelete(e, row) }>
+            {row.isFree === false && <DropdownItem href='/' onClick={ (e) => onClickDelete(e, row) }>
               <Trash className='me-50' size={15} /> <span className='align-middle'>حذف</span>
-            </DropdownItem>
+            </DropdownItem>}
         </DropdownMenu>
       </UncontrolledDropdown>
     }
@@ -148,4 +143,4 @@ const FaqDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
   )
 }
 
-export default FaqDataTable
+export default TarrifsDataTable

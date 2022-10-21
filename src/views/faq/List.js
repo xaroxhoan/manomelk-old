@@ -7,7 +7,7 @@ import useService from '../../hooks/service'
 const FaqList = () => {
   const {faq} = useService()
   const query = useLocation()
-  const [active, setActive] = useState('enabled')
+  const [active, setActive] = useState('all')
   const [Component, setComponent] = useState(null)
   const [updateCounter, setUpdateCounter] = useState(0)
   const [componentInfo, setComponentInfo] = useState({
@@ -73,7 +73,7 @@ const FaqList = () => {
               <CardTitle className='has-action'>
                 <span>سوالات متداول</span>
                 <div className='actions'>
-                  <Button block color='relief-primary' onClick={ onClickNewFaq }>سوال و جواب جدید</Button>
+                  <Button block color='relief-primary' onClick={ onClickNewFaq }>سوال متداول جدید</Button>
                 </div>
               </CardTitle>
             </CardHeader>
@@ -107,11 +107,11 @@ const FaqList = () => {
           { Component === null && <Card>
             <CardHeader>
               <CardTitle>
-                <span>No Record Selected</span>
+                <span>هیچ آیتمی انتخاب نشده است</span>
               </CardTitle>
             </CardHeader>
             <CardBody>
-              <div className='no-records'>No Record Selected</div>
+              <div className='no-records'>هیچ آیتمی انتخاب نشده است</div>
             </CardBody>
           </Card> }
           { Component !== null && componentInfo.type === 'create' && <Component onSaved={onSaved} onCancel={onCancel} />}

@@ -155,19 +155,34 @@ const useService = () => {
             get: id => jwtAxios.post('/admin/transaction/get', {_id: id})
         },
         faq: {
-            store: data => jwtAxios.post('/admin/faq', data),
+            fetchAll: () => jwtAxios.post('/admin/faq/all'),
             fetchList: data => jwtAxios.post('/admin/faq/list', data),
             delete: id => jwtAxios.delete(`/admin/faq/delete/${id}`),
-            update: (id, data) => jwtAxios.put(`/admin/faq/update/${id}`, data),
-            updateStatus: (id, data) => jwtAxios.put(`/admin/faq/update/status/${id}`, data)
+            store: data => jwtAxios.post('/admin/faq/create', data),
+            update: (id, data) => jwtAxios.post(`/admin/faq/update`, {
+                _id: id,
+                ...data
+            }),
+            get: id => jwtAxios.post('/admin/faq/get', {_id: id}),
+            updateStatus: (id, data) => jwtAxios.post(`/admin/faq/update/status`, {
+                _id: id,
+                ...data
+            })
         },
         faqtopic: {
-            store: data => jwtAxios.post('/admin/faqtopic', data),
-            fetchAll: data => jwtAxios.post('/admin/faqtopic/all', data),
+            fetchAll: () => jwtAxios.post('/admin/faqtopic/all'),
             fetchList: data => jwtAxios.post('/admin/faqtopic/list', data),
             delete: id => jwtAxios.delete(`/admin/faqtopic/delete/${id}`),
-            update: (id, data) => jwtAxios.put(`/admin/faqtopic/update/${id}`, data),
-            updateStatus: (id, data) => jwtAxios.put(`/admin/faqtopic/update/status/${id}`, data)
+            store: data => jwtAxios.post('/admin/faqtopic/create', data),
+            update: (id, data) => jwtAxios.post(`/admin/faqtopic/update`, {
+                _id: id,
+                ...data
+            }),
+            get: id => jwtAxios.post('/admin/faqtopic/get', {_id: id}),
+            updateStatus: (id, data) => jwtAxios.post(`/admin/faqtopic/update/status`, {
+                _id: id,
+                ...data
+            })
         },
         contactus: {
             fetchList: data => jwtAxios.post('/admin/contact/list', data),
@@ -184,6 +199,21 @@ const useService = () => {
             storeMultiple: (group, values) => jwtAxios.post('/admin/setting/store/multiple', {
                 group,
                 values
+            })
+        },
+        tarrifs: {
+            fetchAll: () => jwtAxios.post('/admin/tarrif/all'),
+            fetchList: data => jwtAxios.post('/admin/tarrif/list', data),
+            delete: id => jwtAxios.delete(`/admin/tarrif/delete/${id}`),
+            store: data => jwtAxios.post('/admin/tarrif/create', data),
+            update: (id, data) => jwtAxios.post(`/admin/tarrif/update`, {
+                _id: id,
+                ...data
+            }),
+            get: id => jwtAxios.post('/admin/tarrif/get', {_id: id}),
+            updateStatus: (id, data) => jwtAxios.post(`/admin/tarrif/update/status`, {
+                _id: id,
+                ...data
             })
         }
     }

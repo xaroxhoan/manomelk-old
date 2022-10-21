@@ -3,7 +3,7 @@ import { Row, Col, Input, Card, CardHeader, CardBody, CardTitle, Label, Button, 
 import Select from 'react-select'
 import useService from '../../hooks/service'
 import useValidator from '../../hooks/velidator'
-import BoxAlert from '@appcomponents/alert/BoxAlert'
+import useToast from '../../hooks/toast'
 
 const FaqTopicUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
   const {faqtopic} = useService()
@@ -13,11 +13,10 @@ const FaqTopicUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
   const [isInitialLoaded, setIsInitialLoaded] = useState(false)
   const [state, setState] = useState({
     title: '',
-    alias: '',
     sort: 0,
-    status: { label: 'Enabled', value: 'enabled' },
-    successMessage: ''
+    status: { label: 'فعال', value: 'enabled' }
   })
+  const {toastError, toastSuccess} = useToast()
 
   useEffect(() => {
     if (defaultInfo === null) {
@@ -27,10 +26,8 @@ const FaqTopicUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
       setState({
         ...state,
         title: defaultInfo.title,
-        alias: defaultInfo.alias,
         sort: defaultInfo.sort,
-        status: { label: defaultInfo.status.charAt(0).toUpperCase() + defaultInfo.status.slice(1), value: defaultInfo.status },
-        successMessage: ''
+        status: { label: (defaultInfo.status === "enabled" ? "فعال" : "غیرفعال"), value: defaultInfo.status }
       })
       setErrors({})
     } catch (e) {}
@@ -39,8 +36,7 @@ const FaqTopicUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
   const validateFields = async _ => {
     const errs = await validate(state, {
       title: [{name: 'required'}],
-      sort: [{name: 'required'}, {name: 'number'}],
-      alias: [{name: 'required'}, {name: 'unique', model: 'FaqTopic', conditions: {alias: state.alias}, exceptIds: [defaultInfo._id]}]
+      sort: [{name: 'required'}, {name: 'number'}]
     })
     setErrors(errs)
     return errs
@@ -64,24 +60,19 @@ const FaqTopicUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
       }
       const response = await faqtopic.update(defaultInfo._id, {
         title: state.title,
-        alias: state.alias,
         sort: state.sort,
         status: state.status.value
       })
       onUpdated(response)
-      setState({ 
-        ...state,
-        successMessage: response.data.message.message 
-      })
       setErrors({})
+      if (response.data.statusCode === 200) {
+        toastSuccess("تغییرات با موفقیت ثبت گردید")
+      } else {
+        toastError(response.data.message)
+      }
     } catch (e) {
-      if (e.response.status === 422) {
-        const errs = {}
-        e.response.data.messages.forEach(item => {
-          errs[item.field] = item.message
-        })
-        setState({ ...state, successMessage: '' })
-        setErrors(errs)
+      if (e.response.status === 400) {
+        toastError(e.response.data.message[0])
       }
     }
   }
@@ -91,22 +82,19 @@ const FaqTopicUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
       <Card>
         <CardHeader>
           <CardTitle className='has-action'>
-            <span>Update Faq Topic</span>
+            <span>ویرایش گروه</span>
             <div className='actions'>
-              <Button color='relief-primary' onClick={ onUpdate }>Update</Button>&nbsp;
-              <Button color='relief-danger' onClick={ onCancel }>Cancel</Button>
+              <Button color='relief-primary' onClick={ onUpdate }>ویرایش</Button>&nbsp;
+              <Button color='relief-danger' onClick={ onCancel }>لغو</Button>
             </div>
           </CardTitle>
         </CardHeader>
         <CardBody>
-          <BoxAlert type='success' visible={state.successMessage !== ''}>
-            { state.successMessage }
-          </BoxAlert>
           <Row>
             <Col lg='12' md='12'>
               <div className='mb-2'>
-                <Label>Title</Label>
-                <Input placeholder='Title...' value={state.title} onChange={ e => setState({ ...state, title: e.target.value }) } invalid={ errors.title !== undefined } />
+                <Label>عنوان</Label>
+                <Input placeholder='عنوان...' value={state.title} onChange={ e => setState({ ...state, title: e.target.value }) } invalid={ errors.title !== undefined } />
                 <div className="invalid-feedback">{ errors.title !== undefined ? errors.title : '' }</div>
               </div>
             </Col>
@@ -114,17 +102,8 @@ const FaqTopicUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
           <Row>
             <Col lg='12' md='12'>
               <div className='mb-2'>
-                <Label>Alias</Label>
-                <Input placeholder='Alias...' value={state.alias} onChange={ e => setState({ ...state, alias: e.target.value }) } invalid={ errors.alias !== undefined } />
-                <div className="invalid-feedback">{ errors.alias !== undefined ? errors.alias : '' }</div>
-              </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col lg='12' md='12'>
-              <div className='mb-2'>
-                <Label>Sort Priority</Label>
-                <Input placeholder='Sort Pririty...' value={state.sort} onChange={ e => setState({ ...state, sort: e.target.value }) } invalid={ errors.sort !== undefined } />
+                <Label>اولویت</Label>
+                <Input placeholder='اولویت...' value={state.sort} onChange={ e => setState({ ...state, sort: e.target.value }) } invalid={ errors.sort !== undefined } />
                 <div className="invalid-feedback">{ errors.sort !== undefined ? errors.sort : '' }</div>
               </div>
             </Col>
@@ -132,14 +111,14 @@ const FaqTopicUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
           <Row>
             <Col lg='12' md='12'>
               <div className='mb-2'>
-                <Label>Status</Label>
+                <Label>وضعیت</Label>
                 <Select
                   cacheOptions
                   defaultOptions
                   value={state.status}
                   options={[
-                    { label: 'Enabled', value: 'enabled' },
-                    { label: 'Disabled', value: 'disabled' }
+                    { label: 'فعال', value: 'enabled' },
+                    { label: 'غیرفعال', value: 'disabled' }
                   ]}
                   onChange={ selected => setState({ ...state, status: selected }) }
                 />

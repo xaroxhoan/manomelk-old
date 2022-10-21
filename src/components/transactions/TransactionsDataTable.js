@@ -68,6 +68,17 @@ const TransactionsDataTable = ({ type }) => {
       sortable: true
     },
     {
+      name: 'نوع تراکنش',
+      selector: row => {
+        let result = "-"
+        if (row.tarrif !== null) {
+          result = `خرید تعرفه ${row.tarrif.title}`
+        }
+        return result
+      },
+      sortable: true
+    },
+    {
       name: 'تاریخ',
       selector: row => formatDate(row.createdAt),
       sortable: true

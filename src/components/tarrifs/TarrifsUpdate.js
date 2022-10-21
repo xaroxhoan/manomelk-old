@@ -114,7 +114,7 @@ const TarrifsUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
               </div>
             </Col>
           </Row>
-          {defaultInfo.isFree === false && <Row>
+          {defaultInfo.isFree === false && <><Row>
             <Col lg='12' md='12'>
               <div className='mb-2'>
                 <Label>مبلغ (تومان)</Label>
@@ -122,7 +122,7 @@ const TarrifsUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
                 <div className="invalid-feedback">{ errors.price !== undefined ? errors.price : '' }</div>
               </div>
             </Col>
-          </Row>}
+          </Row>
           <Row>
             <Col lg='12' md='12'>
               <div className='mb-2'>
@@ -131,7 +131,7 @@ const TarrifsUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
                 <div className="invalid-feedback">{ errors.days !== undefined ? errors.days : '' }</div>
               </div>
             </Col>
-          </Row>
+          </Row></>}
           <Row>
             <Col lg='12' md='12'>
             <div className='mb-2'>

@@ -62,23 +62,76 @@ const useService = () => {
             delete: id => jwtAxios.delete(`/admin/newsletter/delete/${id}`),
             updateStatus: (id, data) => jwtAxios.put(`/admin/newsletter/update/status/${id}`, data)
         },
-        messages: {
-            store: data => jwtAxios.post('/admin/message', data),
-            storeChat: data => jwtAxios.post('/admin/message/chat/store', data),
-            fetchList: data => jwtAxios.post('/admin/message/list', data),
-            fetchAll: () => jwtAxios.post('/admin/message/all'),
-            fetchChats: data => jwtAxios.post('/admin/message/chats', data),
-            delete: id => jwtAxios.delete(`/admin/message/delete/${id}`),
-            updateStatus: (id, data) => jwtAxios.put(`/admin/message/update/status/${id}`, data)
-        },
         adverts: {
             fetchAll: () => jwtAxios.post('/admin/advert/all'),
             fetchList: data => jwtAxios.post('/admin/advert/list', data),
             delete: id => jwtAxios.delete(`/admin/advert/delete/${id}`),
-            store: data => jwtAxios.post('/admin/advert/create', data),
-            update: (id, data) => jwtAxios.put(`/admin/advert/${id}`, data),
+            store: data => {
+                const formData = new FormData()
+                formData.append('user', data.user)
+                formData.append('title', data.title)
+                formData.append('category', data.category)
+                formData.append('city', data.city)
+                formData.append('area', data.area)
+                formData.append('description', data.description)
+                for (const attribute of data.attributes) {
+                    formData.append('attributes', JSON.stringify(attribute))
+                }
+                console.log(data.attributes)
+                if (data.attributes.length <= 0) {
+                    formData.append('attributes[]', [])
+                }
+                for (const image of data.images) {
+                    formData.append('images', image, image.name)
+                }
+                formData.append('lat', data.lat)
+                formData.append('lng', data.lng)
+                formData.append('price', data.price)
+                formData.append('priceRahn', data.priceRahn)
+                formData.append('priceEjare', data.priceEjare)
+                formData.append('status', data.status)
+                return jwtAxios.post('/admin/advert/create', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+            },
+            update: (id, data) => {
+                const formData = new FormData()
+                formData.append('_id', id)
+                formData.append('user', data.user)
+                formData.append('title', data.title)
+                formData.append('category', data.category)
+                formData.append('city', data.city)
+                formData.append('area', data.area)
+                formData.append('description', data.description)
+                for (const attribute of data.attributes) {
+                    formData.append('attributes', JSON.stringify(attribute))
+                }
+                console.log(data.attributes)
+                if (data.attributes.length <= 0) {
+                    formData.append('attributes[]', [])
+                }
+                for (const image of data.images) {
+                    formData.append('images', image, image.name)
+                }
+                formData.append('lat', data.lat)
+                formData.append('lng', data.lng)
+                formData.append('price', data.price)
+                formData.append('priceRahn', data.priceRahn)
+                formData.append('priceEjare', data.priceEjare)
+                formData.append('status', data.status)
+                return jwtAxios.post(`/admin/advert/update`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+            },
             get: id => jwtAxios.post('/admin/advert/get', {_id: id}),
-            updateStatus: (id, data) => jwtAxios.put(`/admin/advert/update/status/${id}`, data)
+            updateStatus: (id, data) => jwtAxios.post(`/admin/advert/update/status`, {
+                _id: id,
+                ...data
+            })
         },
         operators: {
             fetchAll: () => jwtAxios.post('/admin/operator/all'),
@@ -215,6 +268,44 @@ const useService = () => {
                 _id: id,
                 ...data
             })
+        },
+        messages: {
+            fetchAll: () => jwtAxios.post('/admin/message/all'),
+            fetchList: data => jwtAxios.post('/admin/message/list', data),
+            delete: id => jwtAxios.delete(`/admin/message/delete/${id}`),
+            store: data => jwtAxios.post('/admin/message/create', data),
+            update: (id, data) => jwtAxios.post(`/admin/message/update`, {
+                _id: id,
+                ...data
+            }),
+            get: id => jwtAxios.post('/admin/message/get', {_id: id}),
+            updateStatus: (id, data) => jwtAxios.post(`/admin/message/update/status`, {
+                _id: id,
+                ...data
+            })
+        },
+        messageChats: {
+            fetchAll: () => jwtAxios.post('/admin/message/chat/all'),
+            fetchList: data => jwtAxios.post('/admin/message/chat/list', data),
+            delete: id => jwtAxios.delete(`/admin/message/chat/delete/${id}`),
+            store: data => jwtAxios.post('/admin/message/chat/create', data),
+            update: (id, data) => jwtAxios.post(`/admin/message/chat/update`, {
+                _id: id,
+                ...data
+            }),
+            get: id => jwtAxios.post('/admin/message/chat/get', {_id: id}),
+            updateStatus: (id, data) => jwtAxios.post(`/admin/message/chat/update/status`, {
+                _id: id,
+                ...data
+            })
+        },
+        categories: {
+            fetchParents: () => jwtAxios.post('/admin/category/parents', {
+                select: ""
+            })
+        },
+        cities: {
+            fetchAll: () => jwtAxios.post('/admin/city/all')
         }
     }
 }

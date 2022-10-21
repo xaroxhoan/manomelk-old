@@ -8,11 +8,10 @@ import MessageLoader from './MessageLoader'
 
 const MessagesList = ({ defaultInfo }) => {
     const dispatch = useDispatch()
-    const {messages} = useService()
+    const {messageChats} = useService()
     const scrollableNodeRef = React.createRef()
     const isFetching = useRef(false)
     const perPage = useSelector(state => state.message.perPage)
-    const me = useSelector(state => state.message.me)
     const page = useSelector(state => state.message.page)
     const totalPages = useSelector(state => state.message.totalPages)
     const messagesList = useSelector(state => state.message.messages)
@@ -25,25 +24,20 @@ const MessagesList = ({ defaultInfo }) => {
         setLoading(true)
         isFetching.current = true
         try {
-            const msgs = await messages.fetchChats({
+            const msgs = await messageChats.fetchList({
                 message: messageData._id,
                 page: newPage,
                 perPage
             })
             const data = {
                 page: newPage,
-                me,
                 messages: [...(newPage === 1 ? [] : messagesList)],
                 defaultInfo: messageData
             }
-            console.log(msgs)
-            if (msgs.data.data.me !== undefined && (data.me === undefined || data.me === null || Object.keys(data.me).length) === 0) {
-                data.me = msgs.data.data.me
-            }
-            if (msgs.data.data.items !== undefined) {
-                const allPages = Math.ceil(msgs.data.data.totalRows / perPage)
+            if (msgs.data.result.items !== undefined) {
+                const allPages = Math.ceil(msgs.data.result.totalRows / perPage)
                 data.totalPages = allPages
-                data.messages = [...([...msgs.data.data.items].reverse()), ...data.messages]
+                data.messages = [...([...msgs.data.result.items].reverse()), ...data.messages]
             } else {
                 data.messages = [messageData]
             }
@@ -96,8 +90,8 @@ const MessagesList = ({ defaultInfo }) => {
         <SimpleBar key={page} style={{ height: 610 }} scrollableNodeProps={{ ref: scrollableNodeRef }} autoHide={false}>
             <div className='chat-messages'>
                 {messagesList.map(message => {
-                    return <div className={message.sender._id === me._id ? "chat-message right" : "chat-message left"} key={message._id}>
-                        <div className='chat-message-content' dangerouslySetInnerHTML={{__html: message.description}}></div>
+                    return <div className={message.senderType === "user" ? "chat-message right" : "chat-message left"} key={message._id}>
+                        <div className='chat-message-content' dangerouslySetInnerHTML={{__html: message.text}}></div>
                     </div>
                 })}
             </div>

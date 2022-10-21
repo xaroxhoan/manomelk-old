@@ -44,6 +44,7 @@
     "jalali-react-datepicker": "^1.2.1",
     "jquery": "^3.5.1",
     "jsonwebtoken": "~8.5.1",
+    "leaflet": "^1.9.2",
     "moment": "^2.29.4",
     "moment-jalaali": "^0.9.4",
     "nouislider": "^15.5.0",
@@ -73,6 +74,7 @@
     "react-image-crop": "^10.0.4",
     "react-is": "^18.2.0",
     "react-lazy-load-image-component": "^1.5.4",
+    "react-leaflet": "^4.1.0",
     "react-paginate": "^7.0.0",
     "react-perfect-scrollbar": "^1.5.5",
     "react-player": "^2.6.2",
@@ -134,9 +136,9 @@
       "not op_mini all"
     ],
     "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
     ]
   },
   "homepage": ""

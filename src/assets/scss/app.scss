@@ -19,6 +19,9 @@
 // pages
 @import "./pages/home";
 
+// leaflet
+@import "./leaflet.scss";
+
 @keyframes AnimTableLoading {
     from {
         opacity: 1;
@@ -102,11 +105,44 @@
 .box-editor-wrapper.has-error .box-editor-content {
     border-color: #ea5455 !important;
 }
+.vadie-ejare {
+    display: grid; grid-template-columns: auto auto; gap: 20px;
+}
 .box-editor-wrapper .box-editor-content {
     border: 1px solid transparent;
 }
 .select-wrapper.has-error .invalid-feedback {
     display: block !important;
+}
+.upload-box {
+    width: 100px; height: 100px; border-radius: 5px;
+    overflow: hidden; border: 2px dotted #ccc; display: flex;
+    justify-content: center; align-items: center; color: #ccc; cursor: pointer;
+    font-size: 40px; margin-right: 15px;
+}
+.upload-box-title {
+    padding-top: 10px;
+}
+.upload-box-image {
+    width: 80px; height: 80px; position: relative;
+}
+.upload-box-image img {
+    width: 100%; height: 100%;
+}
+.upload-box-main {
+    position: absolute; bottom: 0px; left: 0px; width: 100%; height: 20px; background-color: #414d9d; color: #fff;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 10px;
+}
+.upload-modal {
+    position: fixed; top: 50%; left: 50%; width: 400px; background-color: #fff; z-index: 10000;
+    transform: translate(-50%, -50%); border: 1px solid #ddd; border-radius: 5px;
+}
+.upload-modal ul {
+    list-style: none; margin: 0px; padding: 0px;
+}
+.upload-modal ul li {
+    padding: 20px 30px; border-bottom: 1px solid #ddd; cursor: pointer;
 }
 .texteditor,
 .texteditor-500 {
@@ -419,6 +455,40 @@ a.navbar-brand {
 .py-10 {
     padding-top: 10px;
     padding-bottom: 10px;
+}
+.grid {
+    display: grid;
+}
+.grid > div {
+    width: 100%; display: flex;
+}
+.grid > div > div {
+    flex: 1;
+}
+.grid-template-columns2 {
+    grid-template-columns: auto auto auto auto;
+    gap: 20px;
+}
+.relative {
+    position: relative;
+}
+.overflow-hidden {
+    overflow: hidden;
+}
+.h-96 {
+    height: 250px;
+}
+.leaflet-control, .leaflet-pane, .leaflet-top, .leaflet-bottom {
+    z-index: 0 !important
+}
+[dir=rtl] .dir-ltr {
+    direction: ltr !important;
+}
+[dir=rtl] .leaflet-container {
+    width: 100%;
+}
+[dir=rtl] .leaflet-pane, [dir=rtl] .leaflet-tile, [dir=rtl] .leaflet-marker-icon, [dir=rtl] .leaflet-marker-shadow, [dir=rtl] .leaflet-tile-container, [dir=rtl] .leaflet-pane > svg, [dir=rtl] .leaflet-pane > canvas, [dir=rtl] .leaflet-zoom-box, [dir=rtl] .leaflet-image-layer, [dir=rtl] .leaflet-layer {
+    left: 0px !important; right: auto;
 }
 .mb-15 {
     margin-bottom: 15px;

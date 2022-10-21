@@ -5,6 +5,7 @@ import { UncontrolledDropdown, DropdownMenu, DropdownItem, DropdownToggle, Modal
 import useService from '../../hooks/service'
 import CustomLoader from '../CustomLoader'
 import DataTableSearch from '../DataTableSearch'
+import NoDataComponent from '../NoDataComponent'
 
 const MessagesDataTable = ({ onClickMessagesList, type, onChangePublishSwitch }) => {
   const {messages} = useService()
@@ -17,12 +18,7 @@ const MessagesDataTable = ({ onClickMessagesList, type, onChangePublishSwitch })
     totalRows: 0,
     perPage: 8
   })
-  const [filters, _] = useState([
-    { title: 'title', operators: ['equals', 'not equal', 'contains'] },
-    { title: 'alias', operators: ['equals', 'not equal', 'contains'] }
-  ])
-  const [advancedSearch, setAdvancedSearch] = useState([])
-
+  
   const fetchData = async (page) => {
     try {
      setPending(true)
@@ -32,7 +28,7 @@ const MessagesDataTable = ({ onClickMessagesList, type, onChangePublishSwitch })
         perPage: pagination.perPage,
         searchText
       })
-      const result = response.data.data
+      const result = response.data.result
       setItems(result.items)
       setPagination({ 
         ...pagination,
@@ -74,37 +70,37 @@ const MessagesDataTable = ({ onClickMessagesList, type, onChangePublishSwitch })
     setSearchText(value)
   }
 
-  const onAdvancedSearch = values => {
-    setAdvancedSearch(values)
-  }
-
   const onChangeSwitch = row => {
     onChangePublishSwitch(row, pagination, fetchData)
   }
 
   const columns = [
     {
-      name: 'Sender',
-      selector: row => <>
-        <div>{`${row.sender.name + " " + row.sender.family} (${row.sender.type})`}</div>
-        <div><strong>{row.sender.email}</strong></div>
-      </>,
+      name: 'فرستنده',
+      selector: row => {
+        if (row.senderType === "user") {
+          return row.user.name + " " + row.user.family
+        }
+        return row.department.title
+      },
       sortable: true
     },
     {
-      name: 'Receiver',
-      selector: row => <>
-        <div>{`${row.receiver.name + " " + row.receiver.family} (${row.receiver.type})`}</div>
-        <div><strong>{row.receiver.email}</strong></div>
-      </>,
+      name: 'گیرنده',
+      selector: row => {
+        if (row.senderType === "user") {
+          return row.department.title
+        }
+        return row.user.name + " " + row.user.family
+      },
       sortable: true
     },
     {
-      name: 'Status',
+      name: 'وضعیت',
       width: '120px',
       selector: row => <div className='d-flex flex-column'>
         <div className='form-switch form-check-primary'>
-          <Input type='switch' name='primary' onChange={() => onChangeSwitch(row)} defaultChecked={row.status === 'open'} value={type === 'open' ? 'close' : 'open'} />
+          <Input type='switch' name='primary' onChange={() => onChangeSwitch(row)} defaultChecked={row.status === 'opened'} value={type === 'opened' ? 'closed' : 'opened'} />
         </div>
       </div>
     },
@@ -117,10 +113,10 @@ const MessagesDataTable = ({ onClickMessagesList, type, onChangePublishSwitch })
         </DropdownToggle>
         <DropdownMenu>
             <DropdownItem href={'#'} onClick={ e => onClickMessages(e, row) }>
-              <Edit className='me-50' size={15} /> <span className='align-middle'>Messages</span>
+              <Edit className='me-50' size={15} /> <span className='align-middle'>پیام ها</span>
             </DropdownItem>
             <DropdownItem href='/' onClick={ (e) => onClickDelete(e, row) }>
-              <Trash className='me-50' size={15} /> <span className='align-middle'>Delete</span>
+              <Trash className='me-50' size={15} /> <span className='align-middle'>حذف</span>
             </DropdownItem>
         </DropdownMenu>
       </UncontrolledDropdown>
@@ -131,10 +127,7 @@ const MessagesDataTable = ({ onClickMessagesList, type, onChangePublishSwitch })
     <Row>
       <DataTableSearch 
         defaultSearchText={searchText}
-        filters={filters}
-        defaultFilters={advancedSearch}
         onSearch={onSearch} 
-        onAdvancedSearch={onAdvancedSearch}
       />
       <Col lg={12} className="sc-datatable-wrapper">
         <DataTable
@@ -150,13 +143,14 @@ const MessagesDataTable = ({ onClickMessagesList, type, onChangePublishSwitch })
           selectableRows
           progressPending={pending}
           progressComponent={<CustomLoader columns={columns} />}
+          noDataComponent={<NoDataComponent columns={columns} />}
         />
         <Modal isOpen={selectedItem !== null} toggle={() => setSelectedItem(null)} className='modal-dialog-centered'>
-          <ModalHeader toggle={() => setSelectedItem(null)}>Delete</ModalHeader>
-          <ModalBody>Are You Sure?</ModalBody>
+          <ModalHeader toggle={() => setSelectedItem(null)}>حذف</ModalHeader>
+          <ModalBody>آیا مطمئن هستید؟</ModalBody>
           <ModalFooter>
-            <Button color='primary' onClick={() => setSelectedItem(null)}>No</Button>
-            <Button color='danger' onClick={onDelete}>Yes</Button>
+            <Button color='primary' onClick={() => setSelectedItem(null)}>خیر</Button>
+            <Button color='danger' onClick={onDelete}>بله</Button>
           </ModalFooter>
         </Modal>
       </Col>

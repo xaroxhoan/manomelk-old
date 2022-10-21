@@ -7,7 +7,7 @@ import useService from '../../hooks/service'
 const MessagesList = () => {
   const {messages} = useService()
   const query = useLocation()
-  const [active, setActive] = useState('open')
+  const [active, setActive] = useState('all')
   const [Component, setComponent] = useState(null)
   const [messagesCounter, setUpdateCounter] = useState(0)
   const [componentInfo, setComponentInfo] = useState({
@@ -18,8 +18,8 @@ const MessagesList = () => {
   useEffect(() => {
     const params = new URLSearchParams(query.search)
     let tab = params.get('tab')
-    tab = tab === null || tab === '' ? 'open' : tab
-    tab = ['open', 'close'].indexOf(tab) < 0 ? 'open' : tab
+    tab = tab === null || tab === '' ? 'all' : tab
+    tab = ['all', 'opened', 'closed', 'disabled'].indexOf(tab) < 0 ? 'all' : tab
     setActive(tab)
   }, [query.search])
 
@@ -58,7 +58,7 @@ const MessagesList = () => {
   const onChangePublishSwitch = async (row, pagination, callbackFetchData) => {
     try {
        await messages.updateStatus(row._id, {
-         status: row.status === 'open' ? 'close' : 'open'
+         status: row.status === 'opened' ? 'closed' : 'opened'
        })
        await callbackFetchData(pagination.page)
      } catch (e) {}
@@ -71,27 +71,39 @@ const MessagesList = () => {
           <Card>
             <CardHeader>
               <CardTitle className='has-action'>
-                <span>Messages</span>
+                <span>تیکت ها</span>
                 <div className='actions'>
-                  <Button block color='relief-primary' onClick={ onClickNewMessage }>Send New</Button>
+                  <Button block color='relief-primary' onClick={ onClickNewMessage }>تیکت جدید</Button>
                 </div>
               </CardTitle>
             </CardHeader>
             <CardBody>
               <Nav className='custom-tab mb-0' tabs>
                 <NavItem>
-                  <NavLink active={active === 'open'} to={'/messages'} onClick={() => { toggle('open') }}>open</NavLink>
+                  <NavLink active={active === 'all'} to={'/messages'} onClick={() => { toggle('all') }}>همه</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink active={active === 'close'} to={'/messages?tab=close'} onClick={() => { toggle('close') }}>close</NavLink>
+                  <NavLink active={active === 'opened'} to={'/messages?tab=opened'} onClick={() => { toggle('opened') }}>باز</NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink active={active === 'closed'} to={'/messages?tab=closed'} onClick={() => { toggle('closed') }}>بسته</NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink active={active === 'disabled'} to={'/messages?tab=disabled'} onClick={() => { toggle('disabled') }}>غیرفعال</NavLink>
                 </NavItem>
               </Nav>
               <TabContent className='tab-content-datatable py-50' activeTab={active.toString()}>
-                { active === 'open' && <TabPane tabId='open'>
-                  <MessagesDataTable key={messagesCounter} onChangePublishSwitch={onChangePublishSwitch} type={'open'} onClickMessagesList={onClickMessagesList} />
+                { active === 'all' && <TabPane tabId='all'>
+                  <MessagesDataTable key={messagesCounter} onChangePublishSwitch={onChangePublishSwitch} type={'all'} onClickMessagesList={onClickMessagesList} />
                 </TabPane> }
-                { active === 'close' && <TabPane tabId='close'>
-                  <MessagesDataTable key={messagesCounter} onChangePublishSwitch={onChangePublishSwitch} type={'close'} onClickMessagesList={onClickMessagesList} />
+                { active === 'opened' && <TabPane tabId='opened'>
+                  <MessagesDataTable key={messagesCounter} onChangePublishSwitch={onChangePublishSwitch} type={'opened'} onClickMessagesList={onClickMessagesList} />
+                </TabPane> }
+                { active === 'closed' && <TabPane tabId='closed'>
+                  <MessagesDataTable key={messagesCounter} onChangePublishSwitch={onChangePublishSwitch} type={'closed'} onClickMessagesList={onClickMessagesList} />
+                </TabPane> }
+                { active === 'disabled' && <TabPane tabId='disabled'>
+                  <MessagesDataTable key={messagesCounter} onChangePublishSwitch={onChangePublishSwitch} type={'disabled'} onClickMessagesList={onClickMessagesList} />
                 </TabPane> }
               </TabContent>
             </CardBody>

@@ -114,7 +114,7 @@ const AdminHome = () => {
                                         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
                                         datasets: [
                                             {
-                                            label: 'فروش ماهانه',
+                                            label: '',
                                             data: ['January', 'February', 'March', 'April', 'May', 'June', 'July'].map(() => 0),
                                             borderColor: '#7367f0',
                                             backgroundColor: 'rgba(115, 103, 240, 0.12)'
@@ -141,7 +141,7 @@ const AdminHome = () => {
                                         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
                                         datasets: [
                                             {
-                                            label: 'Most Product Sales',
+                                            label: '',
                                             data: ['Product1', 'Product2', 'Product3', 'Product4', 'Product5', 'Product6', 'Product7'].map(() => 0),
                                             borderColor: '#7367f0',
                                             backgroundColor: 'rgba(115, 103, 240, 0.12)'
@@ -168,7 +168,7 @@ const AdminHome = () => {
                                         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
                                         datasets: [
                                             {
-                                            label: 'Customers over time',
+                                            label: '',
                                             data: ['January', 'February', 'March', 'April', 'May', 'June', 'July'].map(() => 0),
                                             borderColor: '#7367f0',
                                             backgroundColor: 'rgba(115, 103, 240, 0.12)'

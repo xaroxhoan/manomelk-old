@@ -1,29 +1,52 @@
 import { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
-import { Collapse, Row, Col } from 'reactstrap'
+import DataTable from 'react-data-table-component'
+import { MoreVertical, Edit, Trash } from 'react-feather'
+import { UncontrolledDropdown, DropdownMenu, DropdownItem, DropdownToggle, Modal, ModalHeader, ModalBody, ModalFooter, Button, Row, Col, Input } from 'reactstrap'
 import useService from '../../hooks/service'
-import CategoriesCollapseItem from './CategoriesCollapseItem'
+import CustomLoader from '../CustomLoader'
+import DataTableSearch from '../DataTableSearch'
+import NoDataComponent from '../NoDataComponent'
 
-const CategoriesDataTable = ({ onClickUpdate, onAddNew }) => {
-  const {articleCategories} = useService()
+const CategoriesDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
+  const {blog} = useService()
   const [pending, setPending] = useState(true)
   const [items, setItems] = useState([])
   const [selectedItem, setSelectedItem] = useState(null)
-  const [openedCollapses, setOpenedCollapses] = useState([])
-  const history = useHistory()
+  const [searchText, setSearchText] = useState('')
+  const [pagination, setPagination] = useState({
+    page: 1,
+    totalRows: 0,
+    perPage: 10
+  })
 
-  const fetchData = async () => {
+  const fetchData = async (page) => {
     try {
       setPending(true)
-      const response = await articleCategories.fetchList()
-      setItems(response.data.data === null ? [] : response.data.data)
+      const response = await blog.categories.fetchList({
+        status: type,
+        page,
+        perPage: pagination.perPage,
+        searchText
+      })
+      const result = response.data.result
+      setItems(result.items)
+      setPagination({ 
+        ...pagination,
+        page: result.page,
+        totalRows: result.totalRows,
+        perPage: result.perPage
+      })
       setPending(false)
     } catch (e) {}
   }
 
   useEffect(async () => {
-    await fetchData()
-  }, [])
+    await fetchData(1)
+  }, [searchText])
+
+  const onChangePage = async page => {
+    await fetchData(page)
+  }
 
   const onClickDelete = (e, item) => {
     e.preventDefault()
@@ -32,74 +55,89 @@ const CategoriesDataTable = ({ onClickUpdate, onAddNew }) => {
 
   const onDelete = async () => {
     try {
-      await articleCategories.delete(selectedItem._id)
+      await blog.categories.delete(selectedItem._id)
       setSelectedItem(null)
-      await fetchData()
+      await fetchData(pagination.page)
     } catch (e) {}
   }
 
-  const onClickEdit = (e, endpointUrl) => {
-    e.preventDefault()
-    history.push(endpointUrl)
-  }
-
-  const toggleCollapse = item => {
-    const index = openedCollapses.indexOf(item._id)
-    if (index > -1) {
-      const newOpenedCollapses = [...openedCollapses]
-      newOpenedCollapses.splice(index, 1)
-      setOpenedCollapses([...newOpenedCollapses])
-    } else {
-      setOpenedCollapses([...openedCollapses, item._id])
-    }
-  }
-
-  const onEditRow = (e, row) => {
+  const onClickEdit = (e, row) => {
     e.preventDefault()
     onClickUpdate(row)
   }
 
+  const onSearch = value => {
+    setSearchText(value)
+  }
+
+  const onChangeSwitch = row => {
+    onChangePublishSwitch(row, pagination, fetchData)
+  }
+
+  const columns = [
+    {
+      name: 'عنوان',
+      selector: row => <a href={'#'} onClick={ e => onClickEdit(e, row) }>{row.title}</a>,
+      sortable: true
+    },
+    {
+      name: 'وضعیت',
+      width: '120px',
+      selector: row => <div className='d-flex flex-column'>
+        <div className='form-switch form-check-primary'>
+          <Input type='switch' name='primary' onChange={() => onChangeSwitch(row)} defaultChecked={row.status === 'enabled'} value={type === 'enabled' ? 'disabled' : 'enabled'} />
+        </div>
+      </div>
+    },
+    {
+      name: '',
+      width: '80px',
+      selector: row => <UncontrolledDropdown>
+        <DropdownToggle className='icon-btn hide-arrow' color='transparent' size='sm' caret>
+            <MoreVertical size={15} />
+        </DropdownToggle>
+        <DropdownMenu>
+            <DropdownItem href={'#'} onClick={ e => onClickEdit(e, row) }>
+              <Edit className='me-50' size={15} /> <span className='align-middle'>ویرایش</span>
+            </DropdownItem>
+            <DropdownItem href='/' onClick={ (e) => onClickDelete(e, row) }>
+              <Trash className='me-50' size={15} /> <span className='align-middle'>حذف</span>
+            </DropdownItem>
+        </DropdownMenu>
+      </UncontrolledDropdown>
+    }
+  ]
+
   return (
-    <Row className='categories-wrapper'>
-      <Col lg={12} sm={12}>
-        {items.map(item => <div key={item._id}>
-          <CategoriesCollapseItem 
-            item={item}
-            openedCollapses={openedCollapses}
-            onClickUpdate={onClickUpdate}
-            onAddNew={onAddNew}
-            onToggleCollapse={toggleCollapse}
-            canAddChild={true}
-            onEditRow={onEditRow}
-          />
-          {(item.children !== null && item.children.length > 0) && <Collapse isOpen={openedCollapses.indexOf(item._id) > -1}>
-            {item.children.map(childrenLevel1 => <div key={childrenLevel1._id}>
-              <CategoriesCollapseItem 
-                item={childrenLevel1}
-                openedCollapses={openedCollapses}
-                onClickUpdate={onClickUpdate}
-                onAddNew={onAddNew}
-                onToggleCollapse={toggleCollapse}
-                canAddChild={true}
-                onEditRow={onEditRow}
-              />
-              {(childrenLevel1.children !== null && childrenLevel1.children.length > 0) && <Collapse isOpen={openedCollapses.indexOf(childrenLevel1._id) > -1}>
-                {childrenLevel1.children.map(childrenLevel2 => <div key={childrenLevel2._id}>
-                  <CategoriesCollapseItem 
-                    item={childrenLevel2}
-                    openedCollapses={openedCollapses}
-                    onClickUpdate={onClickUpdate}
-                    onAddNew={onAddNew}
-                    onToggleCollapse={toggleCollapse}
-                    canAddChild={false}
-                    onEditRow={onEditRow}
-                  />
-                </div>)}
-              </Collapse>}
-            </div>)}
-          </Collapse>}
-        </div>)}
-        { (!pending && items.length <= 0) && <div className='no-records'>No Records Found</div> }
+    <Row>
+      <DataTableSearch 
+        defaultSearchText={searchText}
+        onSearch={onSearch} 
+      />
+      <Col lg={12} className="sc-datatable-wrapper">
+        <DataTable
+          columns={columns}
+          data={items}
+          pagination
+          paginationServer
+          paginationDefaultPage={pagination.page}
+          paginationTotalRows={pagination.totalRows}
+          paginationPerPage={pagination.perPage}
+          paginationComponentOptions={{ noRowsPerPage: true }}
+          onChangePage={onChangePage}
+          selectableRows
+          progressPending={pending}
+          progressComponent={<CustomLoader columns={columns} />}
+          noDataComponent={<NoDataComponent columns={columns} />}
+        />
+        <Modal isOpen={selectedItem !== null} toggle={() => setSelectedItem(null)} className='modal-dialog-centered'>
+          <ModalHeader toggle={() => setSelectedItem(null)}>حذف</ModalHeader>
+          <ModalBody>آیا مطمئن هستید؟</ModalBody>
+          <ModalFooter>
+            <Button color='primary' onClick={() => setSelectedItem(null)}>خیر</Button>
+            <Button color='danger' onClick={onDelete}>بله</Button>
+          </ModalFooter>
+        </Modal>
       </Col>
     </Row>
   )

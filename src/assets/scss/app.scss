@@ -490,6 +490,9 @@ a.navbar-brand {
 [dir=rtl] .leaflet-pane, [dir=rtl] .leaflet-tile, [dir=rtl] .leaflet-marker-icon, [dir=rtl] .leaflet-marker-shadow, [dir=rtl] .leaflet-tile-container, [dir=rtl] .leaflet-pane > svg, [dir=rtl] .leaflet-pane > canvas, [dir=rtl] .leaflet-zoom-box, [dir=rtl] .leaflet-image-layer, [dir=rtl] .leaflet-layer {
     left: 0px !important; right: auto;
 }
+.shadow-bottom.d-block {
+    display: none !important;
+}
 .mb-15 {
     margin-bottom: 15px;
 }

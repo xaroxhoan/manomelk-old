@@ -9,25 +9,6 @@ const useService = () => {
             delete: id => jwtAxios.delete(`/admin/comment/delete/${id}`),
             update: (id, data) => jwtAxios.put(`/admin/comment/update/${id}`, data)
         },
-        blog: {
-            fetchAll: () => jwtAxios.post('/admin/article/all'),
-            fetchArticles: data => jwtAxios.post('/admin/article/list', data),
-            get: data => jwtAxios.post('/admin/article/get', data),
-            delete: id => jwtAxios.delete(`/admin/article/delete/${id}`),
-            reviews: {
-                store: data => jwtAxios.post('/admin/article/comment', data),
-                fetchList: data => jwtAxios.post('/admin/article/comment/list', data),
-                delete: id => jwtAxios.delete(`/admin/article/comment/delete/${id}`),
-                update: (id, data) => jwtAxios.put(`/admin/article/comment/update/${id}`, data),
-                updateStatus: (id, data) => jwtAxios.put(`/admin/article/comment/update/status/${id}`, data)
-            },
-            categories: {
-                fetchAll: () => jwtAxios.post('/admin/article/category/all')
-            },
-            store: data => jwtAxios.post('/admin/article/store', data),
-            update: (id, data) => jwtAxios.put(`/admin/article/update/${id}`, data),
-            updateStatus: (id, data) => jwtAxios.put(`/admin/article/update/status/${id}`, data)
-        },
         uploader: {
             tags: {
                 fetchAll: () => jwtAxios.post('/admin/uploader/tags'),
@@ -49,13 +30,6 @@ const useService = () => {
         },
         orders: {
             fetchList: data => jwtAxios.post('/admin/order/list', data)
-        },
-        articleCategories: {
-            store: data => jwtAxios.post('/admin/article/category', data),
-            fetchAll: () => jwtAxios.post('/admin/article/category/list'),
-            fetchList: () => jwtAxios.post('/admin/article/category/list'),
-            delete: id => jwtAxios.delete(`/admin/article/category/delete/${id}`),
-            update: (id, data) => jwtAxios.put(`/admin/article/category/update/${id}`, data)
         },
         newsletter: {
             fetchList: data => jwtAxios.post('/admin/newsletter/list', data),
@@ -306,6 +280,37 @@ const useService = () => {
         },
         cities: {
             fetchAll: () => jwtAxios.post('/admin/city/all')
+        },
+        blog: {
+            fetchAll: () => jwtAxios.post('/admin/blog/all'),
+            fetchList: data => jwtAxios.post('/admin/blog/list', data),
+            get: data => jwtAxios.post('/admin/blog/get', data),
+            delete: id => jwtAxios.delete(`/admin/blog/delete/${id}`),
+            reviews: {
+                store: data => jwtAxios.post('/admin/blog/review/create', data),
+                fetchList: data => jwtAxios.post('/admin/blog/review/list', data),
+                delete: id => jwtAxios.delete(`/admin/blog/review/delete/${id}`),
+                update: (id, data) => jwtAxios.put(`/admin/blog/review/update/${id}`, data),
+                updateStatus: (id, data) => jwtAxios.put(`/admin/blog/review/update/status/${id}`, data)
+            },
+            categories: {
+                fetchAll: () => jwtAxios.post('/admin/blog/category/all'),
+                fetchList: data => jwtAxios.post('/admin/blog/category/list', data),
+                delete: id => jwtAxios.delete(`/admin/blog/category/delete/${id}`),
+                store: data => jwtAxios.post('/admin/blog/category/create', data),
+                update: (id, data) => jwtAxios.post(`/admin/blog/category/update`, {
+                    _id: id,
+                    ...data
+                }),
+                get: id => jwtAxios.post('/admin/blog/category/get', {_id: id}),
+                updateStatus: (id, data) => jwtAxios.post(`/admin/blog/category/update/status`, {
+                    _id: id,
+                    ...data
+                })
+            },
+            store: data => jwtAxios.post('/admin/blog/create', data),
+            update: (id, data) => jwtAxios.put(`/admin/blog/update/${id}`, data),
+            updateStatus: (id, data) => jwtAxios.put(`/admin/blog/update/status/${id}`, data)
         }
     }
 }

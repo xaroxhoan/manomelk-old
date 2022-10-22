@@ -8,15 +8,15 @@ import useService from '../../hooks/service'
 
 const BlogList = () => {
   const {blog} = useService()
-  const [active, setActive] = useState('published')
+  const [active, setActive] = useState('enabled')
   const query = useLocation()
   const history = useHistory()
 
   useEffect(() => {
     const params = new URLSearchParams(query.search)
     let tab = params.get('tab')
-    tab = tab === null || tab === '' ? 'published' : tab
-    tab = ['published', 'unpublished', 'draft'].indexOf(tab) < 0 ? 'published' : tab
+    tab = tab === null || tab === '' ? 'enabled' : tab
+    tab = ['enabled', 'disabled', 'draft'].indexOf(tab) < 0 ? 'enabled' : tab
     setActive(tab)
   }, [query.search])
 
@@ -33,7 +33,7 @@ const BlogList = () => {
   const onChangePublishSwitch = async (row, pagination, callbackFetchData) => {
     try {
        await blog.updateStatus(row._id, {
-         status: row.status === 'published' ? 'unpublished' : 'published'
+         status: row.status === 'enabled' ? 'disabled' : 'enabled'
        })
        await callbackFetchData(pagination.page)
      } catch (e) {}
@@ -61,21 +61,21 @@ const BlogList = () => {
         <CardBody>
           <Nav className='custom-tab' tabs>
             <NavItem>
-              <NavLink active={(active === 'published').toString()} to={'/articles'} onClick={() => { toggle('published') }}>published</NavLink>
+              <NavLink active={(active === 'enabled').toString()} to={'/articles'} onClick={() => { toggle('enabled') }}>enabled</NavLink>
             </NavItem>
             <NavItem>
-              <NavLink active={(active === 'unpublished').toString()} to={'/articles?tab=unpublished'} onClick={() => { toggle('unpublished') }}>unpublished</NavLink>
+              <NavLink active={(active === 'disabled').toString()} to={'/articles?tab=disabled'} onClick={() => { toggle('disabled') }}>disabled</NavLink>
             </NavItem>
             <NavItem>
               <NavLink active={(active === 'draft').toString()} to={'/articles?tab=draft'} onClick={() => { toggle('draft') }}>draft</NavLink>
             </NavItem>
           </Nav>
           <TabContent className='tab-content-datatable py-50' activeTab={active.toString()}>
-            { active === 'published' && <TabPane tabId='published'>
-              <BlogDataTable onChangePublishSwitch={onChangePublishSwitch} type={'published'} onClickUpdate={onClickUpdate} />
+            { active === 'enabled' && <TabPane tabId='enabled'>
+              <BlogDataTable onChangePublishSwitch={onChangePublishSwitch} type={'enabled'} onClickUpdate={onClickUpdate} />
             </TabPane> }
-            { active === 'unpublished' && <TabPane tabId='unpublished'>
-              <BlogDataTable onChangePublishSwitch={onChangePublishSwitch} type={'unpublished'} onClickUpdate={onClickUpdate} />
+            { active === 'disabled' && <TabPane tabId='disabled'>
+              <BlogDataTable onChangePublishSwitch={onChangePublishSwitch} type={'disabled'} onClickUpdate={onClickUpdate} />
             </TabPane> }
             { active === 'draft' && <TabPane tabId='draft'>
               <BlogDataTable onChangePublishSwitch={onChangePublishSwitch} type={'draft'} onClickUpdate={onClickUpdate} />

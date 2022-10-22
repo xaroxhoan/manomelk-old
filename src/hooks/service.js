@@ -284,14 +284,31 @@ const useService = () => {
         blog: {
             fetchAll: () => jwtAxios.post('/admin/blog/all'),
             fetchList: data => jwtAxios.post('/admin/blog/list', data),
-            get: data => jwtAxios.post('/admin/blog/get', data),
             delete: id => jwtAxios.delete(`/admin/blog/delete/${id}`),
+            store: data => jwtAxios.post('/admin/blog/create', data),
+            update: (id, data) => jwtAxios.post(`/admin/blog/update`, {
+                _id: id,
+                ...data
+            }),
+            get: id => jwtAxios.post('/admin/blog/get', {_id: id}),
+            updateStatus: (id, data) => jwtAxios.post(`/admin/blog/update/status`, {
+                _id: id,
+                ...data
+            }),
             reviews: {
-                store: data => jwtAxios.post('/admin/blog/review/create', data),
+                fetchAll: () => jwtAxios.post('/admin/blog/review/all'),
                 fetchList: data => jwtAxios.post('/admin/blog/review/list', data),
                 delete: id => jwtAxios.delete(`/admin/blog/review/delete/${id}`),
-                update: (id, data) => jwtAxios.put(`/admin/blog/review/update/${id}`, data),
-                updateStatus: (id, data) => jwtAxios.put(`/admin/blog/review/update/status/${id}`, data)
+                store: data => jwtAxios.post('/admin/blog/review/create', data),
+                update: (id, data) => jwtAxios.post(`/admin/blog/review/update`, {
+                    _id: id,
+                    ...data
+                }),
+                get: id => jwtAxios.post('/admin/blog/review/get', {_id: id}),
+                updateStatus: (id, data) => jwtAxios.post(`/admin/blog/review/update/status`, {
+                    _id: id,
+                    ...data
+                })
             },
             categories: {
                 fetchAll: () => jwtAxios.post('/admin/blog/category/all'),
@@ -307,10 +324,7 @@ const useService = () => {
                     _id: id,
                     ...data
                 })
-            },
-            store: data => jwtAxios.post('/admin/blog/create', data),
-            update: (id, data) => jwtAxios.put(`/admin/blog/update/${id}`, data),
-            updateStatus: (id, data) => jwtAxios.put(`/admin/blog/update/status/${id}`, data)
+            }
         }
     }
 }

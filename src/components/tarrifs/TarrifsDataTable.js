@@ -83,11 +83,13 @@ const TarrifsDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
     {
       name: 'وضعیت',
       width: '120px',
-      selector: row => <div className='d-flex flex-column'>
+      selector: row => {
+        return row.isFree === true ? "فعال" : <div className='d-flex flex-column'>
         <div className='form-switch form-check-primary'>
           <Input type='switch' name='primary' onChange={() => onChangeSwitch(row)} defaultChecked={row.status === 'enabled'} value={type === 'enabled' ? 'disabled' : 'enabled'} />
         </div>
       </div>
+      }
     },
     {
       name: '',

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
 import { MoreVertical, Edit, Trash } from 'react-feather'
-import { UncontrolledDropdown, DropdownMenu, DropdownItem, DropdownToggle, Modal, ModalHeader, ModalBody, ModalFooter, Button, Row, Col, Label, Input } from 'reactstrap'
+import { UncontrolledDropdown, DropdownMenu, DropdownItem, DropdownToggle, Modal, ModalHeader, ModalBody, ModalFooter, Button, Row, Col, Input } from 'reactstrap'
 import useService from '../../hooks/service'
-import { jwtAxios } from '../../utility/Utils'
 import CustomLoader from '../CustomLoader'
 import DataTableSearch from '../DataTableSearch'
+import NoDataComponent from '../NoDataComponent'
 
 const BlogDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
   const {blog} = useService()
@@ -16,24 +16,19 @@ const BlogDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
   const [pagination, setPagination] = useState({
     page: 1,
     totalRows: 0,
-    perPage: 8
+    perPage: 10
   })
-  const [filters, _] = useState([
-    { title: 'email', operators: ['equals', 'not equal', 'contains'] },
-    { title: 'subject', operators: ['equals', 'not equal', 'contains'] }
-  ])
-  const [advancedSearch, setAdvancedSearch] = useState([])
 
   const fetchData = async (page) => {
     try {
-     setPending(true)
-      const response = await blog.fetchArticles({
+      setPending(true)
+      const response = await blog.fetchList({
         status: type,
         page,
         perPage: pagination.perPage,
         searchText
       })
-      const result = response.data.data
+      const result = response.data.result
       setItems(result.items)
       setPagination({ 
         ...pagination,
@@ -41,7 +36,7 @@ const BlogDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
         totalRows: result.totalRows,
         perPage: result.perPage
       })
-     setPending(false)
+      setPending(false)
     } catch (e) {}
   }
 
@@ -75,41 +70,22 @@ const BlogDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
     setSearchText(value)
   }
 
-  const onAdvancedSearch = values => {
-    setAdvancedSearch(values)
-  }
-
   const onChangeSwitch = row => {
     onChangePublishSwitch(row, pagination, fetchData)
   }
 
   const columns = [
     {
-      name: 'Image',
-      selector: row => <div className='image-wrapper'><img src={ row.image.isExternalUrl ? row.image.file : `${jwtAxios.defaults.baseURL}${row.image.destination}${row.image.file}` } alt="" /></div>,
-      sortable: false
-    },
-    {
-      name: 'Title',
+      name: 'عنوان',
       selector: row => <a href={'#'} onClick={ e => onClickEdit(e, row) }>{row.title}</a>,
       sortable: true
     },
     {
-      name: 'Slug',
-      selector: row => row.slug,
-      sortable: true
-    },
-    {
-      name: 'Category',
-      selector: row => row.category.title,
-      sortable: true
-    },
-    {
-      name: 'Publish',
+      name: 'وضعیت',
       width: '120px',
       selector: row => <div className='d-flex flex-column'>
         <div className='form-switch form-check-primary'>
-          <Input type='switch' name='primary' onChange={() => onChangeSwitch(row)} defaultChecked={row.status === 'published'} value={type === 'published' ? 'pending' : 'published'} />
+          <Input type='switch' name='primary' onChange={() => onChangeSwitch(row)} defaultChecked={row.status === 'enabled'} value={type === 'enabled' ? 'disabled' : 'enabled'} />
         </div>
       </div>
     },
@@ -122,10 +98,10 @@ const BlogDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
         </DropdownToggle>
         <DropdownMenu>
             <DropdownItem href={'#'} onClick={ e => onClickEdit(e, row) }>
-              <Edit className='me-50' size={15} /> <span className='align-middle'>Edit</span>
+              <Edit className='me-50' size={15} /> <span className='align-middle'>ویرایش</span>
             </DropdownItem>
             <DropdownItem href='/' onClick={ (e) => onClickDelete(e, row) }>
-              <Trash className='me-50' size={15} /> <span className='align-middle'>Delete</span>
+              <Trash className='me-50' size={15} /> <span className='align-middle'>حذف</span>
             </DropdownItem>
         </DropdownMenu>
       </UncontrolledDropdown>
@@ -136,10 +112,7 @@ const BlogDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
     <Row>
       <DataTableSearch 
         defaultSearchText={searchText}
-        filters={filters}
-        defaultFilters={advancedSearch}
         onSearch={onSearch} 
-        onAdvancedSearch={onAdvancedSearch}
       />
       <Col lg={12} className="sc-datatable-wrapper">
         <DataTable
@@ -155,13 +128,14 @@ const BlogDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
           selectableRows
           progressPending={pending}
           progressComponent={<CustomLoader columns={columns} />}
+          noDataComponent={<NoDataComponent columns={columns} />}
         />
         <Modal isOpen={selectedItem !== null} toggle={() => setSelectedItem(null)} className='modal-dialog-centered'>
-          <ModalHeader toggle={() => setSelectedItem(null)}>Delete</ModalHeader>
-          <ModalBody>Are You Sure?</ModalBody>
+          <ModalHeader toggle={() => setSelectedItem(null)}>حذف</ModalHeader>
+          <ModalBody>آیا مطمئن هستید؟</ModalBody>
           <ModalFooter>
-            <Button color='primary' onClick={() => setSelectedItem(null)}>No</Button>
-            <Button color='danger' onClick={onDelete}>Yes</Button>
+            <Button color='primary' onClick={() => setSelectedItem(null)}>خیر</Button>
+            <Button color='danger' onClick={onDelete}>بله</Button>
           </ModalFooter>
         </Modal>
       </Col>

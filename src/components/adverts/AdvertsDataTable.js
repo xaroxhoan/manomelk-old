@@ -82,7 +82,12 @@ const AdvertsDataTable = ({ onClickUpdate, type, onChangePublishSwitch }) => {
     },
     {
       name: 'کاربر',
-      selector: row => `${row.user.name} ${row.user.family}`,
+      selector: row => {
+        if (row.user === undefined) {
+          return "-"
+        }
+        return `${row.user.name} ${row.user.family}`
+      },
       width: '120px',
       sortable: true
     },

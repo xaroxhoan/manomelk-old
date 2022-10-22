@@ -180,7 +180,7 @@ const TarrifsUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
               </div>
             </Col>
           </Row>
-          <Row>
+          {defaultInfo.isFree !== true ? <Row>
             <Col lg='6' md='12'>
               <div className='mb-2'>
                 <Label>وضعیت</Label>
@@ -197,7 +197,7 @@ const TarrifsUpdate = ({ defaultInfo, onUpdated, onCancel }) => {
                 <div className="invalid-feedback">{ errors.status !== undefined ? errors.status : '' }</div>
               </div>
             </Col>
-          </Row>
+          </Row> : undefined}
         </CardBody>
       </Card>
     </div>

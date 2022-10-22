@@ -80,13 +80,13 @@ const BlogCategoriesList = () => {
             <CardBody>
               <Nav className='custom-tab mb-0' tabs>
                 <NavItem>
-                  <NavLink active={active === 'all'} to={'/blog'} onClick={() => { toggle('all') }}>همه</NavLink>
+                  <NavLink active={active === 'all'} to={'/articles/categories'} onClick={() => { toggle('all') }}>همه</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink active={active === 'enabled'} to={'/blog?tab=enabled'} onClick={() => { toggle('enabled') }}>فعال ها</NavLink>
+                  <NavLink active={active === 'enabled'} to={'/articles/categories?tab=enabled'} onClick={() => { toggle('enabled') }}>فعال ها</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink active={active === 'disabled'} to={'/blog?tab=disabled'} onClick={() => { toggle('disabled') }}>غیرفعال ها</NavLink>
+                  <NavLink active={active === 'disabled'} to={'/articles/categories?tab=disabled'} onClick={() => { toggle('disabled') }}>غیرفعال ها</NavLink>
                 </NavItem>
               </Nav>
               <TabContent className='tab-content-datatable py-50' activeTab={active.toString()}>

@@ -1,22 +1,25 @@
-import { Card, CardHeader, CardBody, CardTitle, Button, Nav, NavItem, TabContent, TabPane } from 'reactstrap'
-import { Plus } from 'react-feather'
-import { NavLink, useLocation, useHistory } from 'react-router-dom'
-import DataTableActionButton from '@appcomponents/DataTableActionButton'
-import { useEffect, useState } from 'react'
-import BlogDataTable from '@appcomponents/blog/BlogDataTable'
+import { Card, CardHeader, CardBody, CardTitle, Button, Row, Col, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap'
+import { useState, lazy, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import useService from '../../hooks/service'
+import BlogDataTable from '../../components/blog/BlogDataTable'
 
 const BlogList = () => {
   const {blog} = useService()
-  const [active, setActive] = useState('enabled')
   const query = useLocation()
-  const history = useHistory()
+  const [active, setActive] = useState('all')
+  const [Component, setComponent] = useState(null)
+  const [updateCounter, setUpdateCounter] = useState(0)
+  const [componentInfo, setComponentInfo] = useState({
+    type: null,
+    data: null
+  })
 
   useEffect(() => {
     const params = new URLSearchParams(query.search)
     let tab = params.get('tab')
-    tab = tab === null || tab === '' ? 'enabled' : tab
-    tab = ['enabled', 'disabled', 'draft'].indexOf(tab) < 0 ? 'enabled' : tab
+    tab = tab === null || tab === '' ? 'all' : tab
+    tab = ['all', 'enabled', 'disabled'].indexOf(tab) < 0 ? 'all' : tab
     setActive(tab)
   }, [query.search])
 
@@ -26,9 +29,31 @@ const BlogList = () => {
     }
   }
 
-  const onClickNewProduct = () => {
-    history.push('/articles/create')
+  const onClickNewBlogCategory = _ => {
+    setComponentInfo({ ...componentInfo, type: 'create' })
   }
+
+  const onClickUpdate = row => {
+    setComponentInfo({ ...componentInfo, type: 'update', data: row })
+  }
+
+  const onSaved = _ => {
+    setUpdateCounter(updateCounter + 1)
+  }
+
+  const onCancel = _ => {
+    setComponent(null)
+    setComponentInfo({ ...componentInfo, type: null })
+  }
+
+  useEffect(() => {
+    if (componentInfo.type === 'update') {
+      setComponent(lazy(() => import('@appcomponents/blog/BlogUpdate')))
+    }
+    if (componentInfo.type === 'create') {
+      setComponent(lazy(() => import('@appcomponents/blog/BlogCreate')))
+    }
+  }, [componentInfo.type])
 
   const onChangePublishSwitch = async (row, pagination, callbackFetchData) => {
     try {
@@ -39,50 +64,60 @@ const BlogList = () => {
      } catch (e) {}
   }
 
-  const onClickUpdate = row => {
-    history.push(`/articles/update/${row._id}`)
-  }
-
   return (
     <div>
-      <Card>
-        <CardHeader>
-          <CardTitle className='has-action'>
-            <span>Articles</span>
-            <div className='actions'>
-              <Button block color='relief-primary' onClick={ onClickNewProduct }>
-                <Plus size={16} />
-                Add New
-              </Button>
-              <DataTableActionButton />
-            </div>
-          </CardTitle>
-        </CardHeader>
-        <CardBody>
-          <Nav className='custom-tab' tabs>
-            <NavItem>
-              <NavLink active={(active === 'enabled').toString()} to={'/articles'} onClick={() => { toggle('enabled') }}>enabled</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink active={(active === 'disabled').toString()} to={'/articles?tab=disabled'} onClick={() => { toggle('disabled') }}>disabled</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink active={(active === 'draft').toString()} to={'/articles?tab=draft'} onClick={() => { toggle('draft') }}>draft</NavLink>
-            </NavItem>
-          </Nav>
-          <TabContent className='tab-content-datatable py-50' activeTab={active.toString()}>
-            { active === 'enabled' && <TabPane tabId='enabled'>
-              <BlogDataTable onChangePublishSwitch={onChangePublishSwitch} type={'enabled'} onClickUpdate={onClickUpdate} />
-            </TabPane> }
-            { active === 'disabled' && <TabPane tabId='disabled'>
-              <BlogDataTable onChangePublishSwitch={onChangePublishSwitch} type={'disabled'} onClickUpdate={onClickUpdate} />
-            </TabPane> }
-            { active === 'draft' && <TabPane tabId='draft'>
-              <BlogDataTable onChangePublishSwitch={onChangePublishSwitch} type={'draft'} onClickUpdate={onClickUpdate} />
-            </TabPane> }
-          </TabContent>
-        </CardBody>
-      </Card>
+      <Row className='list-create-wrapper'>
+        <Col lg={6} sm={12}>
+          <Card>
+            <CardHeader>
+              <CardTitle className='has-action'>
+                <span>مقالات وبلاگ</span>
+                <div className='actions'>
+                  <Button block color='relief-primary' onClick={ onClickNewBlogCategory }>مقاله جدید</Button>
+                </div>
+              </CardTitle>
+            </CardHeader>
+            <CardBody>
+              <Nav className='custom-tab mb-0' tabs>
+                <NavItem>
+                  <NavLink active={active === 'all'} to={'/articles'} onClick={() => { toggle('all') }}>همه</NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink active={active === 'enabled'} to={'/articles?tab=enabled'} onClick={() => { toggle('enabled') }}>فعال ها</NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink active={active === 'disabled'} to={'/articles?tab=disabled'} onClick={() => { toggle('disabled') }}>غیرفعال ها</NavLink>
+                </NavItem>
+              </Nav>
+              <TabContent className='tab-content-datatable py-50' activeTab={active.toString()}>
+                { active === 'all' && <TabPane tabId='all'>
+                  <BlogDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'all'} onClickUpdate={onClickUpdate} />
+                </TabPane> }
+                { active === 'enabled' && <TabPane tabId='enabled'>
+                  <BlogDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'enabled'} onClickUpdate={onClickUpdate} />
+                </TabPane> }
+                { active === 'disabled' && <TabPane tabId='disabled'>
+                  <BlogDataTable key={updateCounter} onChangePublishSwitch={onChangePublishSwitch} type={'disabled'} onClickUpdate={onClickUpdate} />
+                </TabPane> }
+              </TabContent>
+            </CardBody>
+          </Card>
+        </Col>
+        <Col lg={6} sm={12}>
+          { Component === null && <Card>
+            <CardHeader>
+              <CardTitle>
+                <span>هیچ آیتمی انتخاب نشده است</span>
+              </CardTitle>
+            </CardHeader>
+            <CardBody>
+              <div className='no-records'>هیچ آیتمی انتخاب نشده است</div>
+            </CardBody>
+          </Card> }
+          { Component !== null && componentInfo.type === 'create' && <Component onSaved={onSaved} onCancel={onCancel} />}
+          { Component !== null && componentInfo.type === 'update' && <Component key={componentInfo.data._id} onUpdated={onSaved} defaultInfo={componentInfo.data} onCancel={onCancel} />}
+        </Col>
+      </Row>
     </div>
   )
 }

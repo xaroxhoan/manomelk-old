@@ -158,24 +158,24 @@ export default [
       { action: Permissions.Messages.Read.action, resource: Permissions.Messages.Read.resource }
     ]
   },
-  {
-    id: 'reporting',
-    title: 'گزارش ها',
-    icon: <BarChart size={20} />,
-    navLink: '/reporting',
-    permissions: [
-      { action: Permissions.Reporting.Read.action, resource: Permissions.Reporting.Read.resource }
-    ]
-  },
-  {
-    id: 'newsletter',
-    title: 'خبرنامه',
-    icon: <Mail size={20} />,
-    navLink: '/newsletter',
-    permissions: [
-      { action: Permissions.Newsletter.Read.action, resource: Permissions.Newsletter.Read.resource }
-    ]
-  },
+  // {
+  //   id: 'reporting',
+  //   title: 'گزارش ها',
+  //   icon: <BarChart size={20} />,
+  //   navLink: '/reporting',
+  //   permissions: [
+  //     { action: Permissions.Reporting.Read.action, resource: Permissions.Reporting.Read.resource }
+  //   ]
+  // },
+  // {
+  //   id: 'newsletter',
+  //   title: 'خبرنامه',
+  //   icon: <Mail size={20} />,
+  //   navLink: '/newsletter',
+  //   permissions: [
+  //     { action: Permissions.Newsletter.Read.action, resource: Permissions.Newsletter.Read.resource }
+  //   ]
+  // },
   {
     id: 'contactus',
     title: 'تماس با ما',

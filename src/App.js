@@ -56,9 +56,9 @@ const App = () => {
   return <>
     {!isLatestVersion ? <div className="version-control-wrapper">
       <div>
-        <p>New Version Released!</p>
+        <p>ورژن جدید من و ملک</p>
         <ul>
-          <li>Add working hours to ShopInfo settings</li>
+          <li>رفع باگ ها</li>
         </ul>
         <div>
           <Button color="relief-primary" disabled={loadingUpdate} onClick={onClickUpdate}>
